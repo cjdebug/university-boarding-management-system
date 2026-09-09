@@ -5,6 +5,7 @@ from sqlalchemy import text
 from app.routers.rooms import router as rooms_router
 
 from app.routers.room_allocations import router as room_allocations_router
+from app.routers.fee_records import router as fee_records_router
 
 from app.core.config import settings
 from app.database.connection import engine
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(rooms_router)
 app.include_router(room_allocations_router)
+app.include_router(fee_records_router)
 
 
 @app.get("/")
