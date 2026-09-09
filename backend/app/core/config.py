@@ -24,5 +24,19 @@ class Settings:
         f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
 
+    JWT_SECRET_KEY = os.getenv(
+        "JWT_SECRET_KEY",
+        "change-this-for-development",
+    )
+
+    JWT_ALGORITHM = os.getenv(
+        "JWT_ALGORITHM",
+        "HS256",
+    )
+
+    JWT_EXPIRE_MINUTES = int(
+        os.getenv("JWT_EXPIRE_MINUTES", "60")
+    )
+
 
 settings = Settings()
