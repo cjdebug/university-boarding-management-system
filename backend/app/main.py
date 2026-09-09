@@ -1,3 +1,7 @@
+from sqlalchemy import text
+from app.database.connection import engine
+
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,3 +39,21 @@ def health_check():
         "status": "healthy",
         "service": "backend"
     }
+
+@app.get("/health/database")
+def database_health_check():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+        }
+
+    except Exception as error:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(error),
+        }
