@@ -6,6 +6,7 @@ from app.routers.rooms import router as rooms_router
 
 from app.routers.room_allocations import router as room_allocations_router
 from app.routers.fee_records import router as fee_records_router
+from app.routers.attendance import router as attendance_router
 
 from app.core.config import settings
 from app.database.connection import engine
@@ -32,6 +33,7 @@ app.include_router(auth_router)
 app.include_router(rooms_router)
 app.include_router(room_allocations_router)
 app.include_router(fee_records_router)
+app.include_router(attendance_router)
 
 
 @app.get("/")
