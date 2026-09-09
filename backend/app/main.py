@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.routers.rooms import router as rooms_router
+
+from app.routers.room_allocations import router as room_allocations_router
+
 from app.core.config import settings
 from app.database.connection import engine
 from app.routers.auth import router as auth_router
@@ -24,6 +28,8 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(rooms_router)
+app.include_router(room_allocations_router)
 
 
 @app.get("/")

@@ -20,7 +20,7 @@ function OwnerSidebar() {
     },
     {
       label: "Student & Room Allocation",
-      path: "/owner/student-room",
+      path: "/owner/student-room-management",
       icon: Users,
     },
     {

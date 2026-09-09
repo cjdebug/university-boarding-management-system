@@ -1,43 +1,42 @@
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-} from 'react-router-dom'
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import Login from '../pages/auth/Login'
+import Login from "../pages/auth/Login";
 
-import OwnerLayout from '../components/layout/OwnerLayout'
-import StudentLayout from '../components/layout/StudentLayout'
-
-import OwnerDashboard from '../pages/owner/Dashboard'
-import StudentDashboard from '../pages/student/Dashboard'
+import OwnerLayout from "../components/layout/OwnerLayout";
+import StudentLayout from "../components/layout/StudentLayout";
+import AllocateRoom from "../pages/owner/AllocateRoom";
+import StudentRoomManagement from "../pages/owner/StudentRoomManagement";
+import OwnerDashboard from "../pages/owner/Dashboard";
+import StudentDashboard from "../pages/student/Dashboard";
+import AddRoom from "../pages/owner/AddRoom";
 
 function AppRoutes() {
-return (
-    <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
-            <Route path="/owner" element={<OwnerLayout />}>
-                <Route
-                    path="dashboard"
-                    element={<OwnerDashboard />}
-            />
-            </Route>
+      <Route path="/login" element={<Login />} />
 
-            <Route
-                path="/student"
-                element={<StudentLayout />}
-            >
-            <Route
-                path="dashboard"
-                element={<StudentDashboard />}
-            />
-            </Route>
-        </Routes>
-    </BrowserRouter>
-)
+      <Route path="/owner" element={<OwnerLayout />}>
+        <Route path="dashboard" element={<OwnerDashboard />} />
+
+        <Route path="rooms/add" element={<AddRoom />} />
+
+        <Route
+          path="student-room-management"
+          element={<StudentRoomManagement />}
+        />
+
+        <Route path="room-allocations/add" element={<AllocateRoom />} />
+      </Route>
+
+      <Route path="/student" element={<StudentLayout />}>
+        <Route path="dashboard" element={<StudentDashboard />} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
 }
 
-export default AppRoutes
+export default AppRoutes;
