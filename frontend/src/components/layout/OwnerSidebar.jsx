@@ -25,7 +25,7 @@ function OwnerSidebar() {
     },
     {
       label: "Boarding Fee & Payments",
-      path: "/owner/payments",
+      path: "/owner/fee-records/add",
       icon: CreditCard,
     },
     {

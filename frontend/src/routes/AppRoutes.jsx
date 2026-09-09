@@ -9,6 +9,7 @@ import StudentRoomManagement from "../pages/owner/StudentRoomManagement";
 import OwnerDashboard from "../pages/owner/Dashboard";
 import StudentDashboard from "../pages/student/Dashboard";
 import AddRoom from "../pages/owner/AddRoom";
+import CreateFeeRecord from "../pages/owner/CreateFeeRecord";
 
 function AppRoutes() {
   return (
@@ -26,6 +27,8 @@ function AppRoutes() {
           path="student-room-management"
           element={<StudentRoomManagement />}
         />
+
+        <Route path="fee-records/add" element={<CreateFeeRecord />} />
 
         <Route path="room-allocations/add" element={<AllocateRoom />} />
       </Route>
