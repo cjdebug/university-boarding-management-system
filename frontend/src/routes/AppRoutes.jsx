@@ -10,6 +10,7 @@ import OwnerDashboard from "../pages/owner/Dashboard";
 import StudentDashboard from "../pages/student/Dashboard";
 import AddRoom from "../pages/owner/AddRoom";
 import CreateFeeRecord from "../pages/owner/CreateFeeRecord";
+import MarkAttendance from "../pages/owner/MarkAttendance";
 
 function AppRoutes() {
   return (
@@ -29,6 +30,8 @@ function AppRoutes() {
         />
 
         <Route path="fee-records/add" element={<CreateFeeRecord />} />
+
+        <Route path="attendance/add" element={<MarkAttendance />} />
 
         <Route path="room-allocations/add" element={<AllocateRoom />} />
       </Route>
