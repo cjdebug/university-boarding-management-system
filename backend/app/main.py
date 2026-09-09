@@ -1,0 +1,59 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+
+from app.core.config import settings
+from app.database.connection import engine
+from app.routers.auth import router as auth_router
+
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    description="Backend API for the University Boarding Management System.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        settings.FRONTEND_URL,
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth_router)
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "University Boarding Management System API is running"
+    }
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "backend"
+    }
+
+@app.get("/health/database")
+def database_health_check():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+        }
+
+    except Exception as error:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(error),
+        }
