@@ -40,7 +40,7 @@ function OwnerSidebar() {
     },
     {
       label: "Communication & Turnover",
-      path: "/owner/communication",
+      path: "/owner/announcements/add",
       icon: MessageSquare,
     },
     {
