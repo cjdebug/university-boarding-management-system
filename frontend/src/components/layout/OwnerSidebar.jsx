@@ -35,7 +35,7 @@ function OwnerSidebar() {
     },
     {
       label: "Boarding Operations",
-      path: "/owner/operations",
+      path: "/owner/maintenance-requests/add",
       icon: Wrench,
     },
     {

@@ -5,3 +5,4 @@ from app.models.room import Room
 from app.models.room_allocation import RoomAllocation
 from app.models.fee_record import FeeRecord
 from app.models.attendance import Attendance
+from app.models.maintenance_request import MaintenanceRequest
