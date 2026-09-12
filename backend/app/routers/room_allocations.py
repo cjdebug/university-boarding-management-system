@@ -9,12 +9,46 @@ from app.schemas.room_allocation import (
     RoomAllocationCreate,
     RoomAllocationResponse,
 )
+from app.services.auth_service import get_current_user
+from app.models.user import User
 
 
 router = APIRouter(
     prefix="/room-allocations",
     tags=["Room Allocations"],
 )
+
+
+@router.get(
+    "/my",
+    response_model=RoomAllocationResponse,
+)
+def get_my_room_allocation(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    allocation = db.query(RoomAllocation).filter(
+        RoomAllocation.student_id == student.student_id,
+        RoomAllocation.allocation_status == "active",
+    ).first()
+
+    if not allocation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active room allocation found",
+        )
+
+    return allocation
 
 
 @router.post(
@@ -84,3 +118,14 @@ def create_room_allocation(
     db.refresh(new_allocation)
 
     return new_allocation
+
+@router.get(
+    "",
+    response_model=list[RoomAllocationResponse],
+)
+def get_room_allocations(
+    db: Session = Depends(get_db),
+):
+    allocations = db.query(RoomAllocation).all()
+
+    return allocations

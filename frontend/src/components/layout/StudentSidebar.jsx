@@ -25,7 +25,7 @@ function StudentSidebar({ studentName, studentId }) {
     },
     {
       label: "My Room & Allocation",
-      path: "/student/room",
+      path: "/student/room-allocation",
       icon: BedDouble,
     },
     {
