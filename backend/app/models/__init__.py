@@ -7,3 +7,4 @@ from app.models.fee_record import FeeRecord
 from app.models.attendance import Attendance
 from app.models.maintenance_request import MaintenanceRequest
 from app.models.announcement import Announcement
+from app.models.payment import Payment
