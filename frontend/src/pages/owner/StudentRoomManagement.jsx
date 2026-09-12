@@ -27,6 +27,10 @@ function StudentRoomManagement() {
         <button onClick={() => navigate("/owner/room-allocations")}>
           View Room Allocations
         </button>
+
+        <button onClick={() => navigate("/owner/students/add")}>
+          Add Student
+        </button>
       </div>
     </div>
   );

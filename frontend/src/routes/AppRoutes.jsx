@@ -15,6 +15,7 @@ import CreateMaintenanceRequest from "../pages/owner/CreateMaintenanceRequest";
 import CreateAnnouncement from "../pages/owner/CreateAnnouncement";
 import ViewRoomAllocations from "../pages/owner/ViewRoomAllocations";
 import MyRoomAllocation from "../pages/student/MyRoomAllocation";
+import AddStudent from "../pages/owner/AddStudent";
 
 function AppRoutes() {
   return (
@@ -47,6 +48,8 @@ function AppRoutes() {
         <Route path="announcements/add" element={<CreateAnnouncement />} />
 
         <Route path="room-allocations" element={<ViewRoomAllocations />} />
+
+        <Route path="students/add" element={<AddStudent />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
