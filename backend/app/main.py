@@ -9,6 +9,7 @@ from app.routers.fee_records import router as fee_records_router
 from app.routers.attendance import router as attendance_router
 from app.routers.maintenance_requests import router as maintenance_requests_router
 from app.routers.announcements import router as announcements_router
+from app.routers.students import router as students_router
 
 from app.core.config import settings
 from app.database.connection import engine
@@ -38,6 +39,7 @@ app.include_router(fee_records_router)
 app.include_router(attendance_router)
 app.include_router(maintenance_requests_router)
 app.include_router(announcements_router)
+app.include_router(students_router)
 
 
 @app.get("/")
