@@ -16,6 +16,13 @@ import CreateAnnouncement from "../pages/owner/CreateAnnouncement";
 import ViewRoomAllocations from "../pages/owner/ViewRoomAllocations";
 import MyRoomAllocation from "../pages/student/MyRoomAllocation";
 import AddStudent from "../pages/owner/AddStudent";
+import ViewFeeRecords from "../pages/owner/ViewFeeRecords";
+import MyFees from "../pages/student/MyFees";
+import FeePaymentManagement from "../pages/owner/FeePaymentManagement";
+import RecordPayment from "../pages/owner/RecordPayment";
+import ViewPaymentHistory from "../pages/owner/ViewPaymentHistory";
+import MyPaymentHistory from "../pages/student/MyPaymentHistory";
+import StudentFeePaymentManagement from "../pages/student/StudentFeePaymentManagement";
 
 function AppRoutes() {
   return (
@@ -50,12 +57,26 @@ function AppRoutes() {
         <Route path="room-allocations" element={<ViewRoomAllocations />} />
 
         <Route path="students/add" element={<AddStudent />} />
+
+        <Route path="fee-records" element={<ViewFeeRecords />} />
+
+        <Route path="fee-payments" element={<FeePaymentManagement />} />
+
+        <Route path="payments/add" element={<RecordPayment />} />
+
+        <Route path="payments" element={<ViewPaymentHistory />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
         <Route path="dashboard" element={<StudentDashboard />} />
 
         <Route path="room-allocation" element={<MyRoomAllocation />} />
+
+        <Route path="fees" element={<MyFees />} />
+
+        <Route path="payment-history" element={<MyPaymentHistory />} />
+
+        <Route path="fee-payments" element={<StudentFeePaymentManagement />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

@@ -35,7 +35,7 @@ function StudentSidebar({ studentName, studentId }) {
     },
     {
       label: "Boarding Fee & Payments",
-      path: "/student/payments",
+      path: "/student/fee-payments",
       icon: CreditCard,
     },
     {
