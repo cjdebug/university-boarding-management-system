@@ -13,6 +13,8 @@ import CreateFeeRecord from "../pages/owner/CreateFeeRecord";
 import MarkAttendance from "../pages/owner/MarkAttendance";
 import CreateMaintenanceRequest from "../pages/owner/CreateMaintenanceRequest";
 import CreateAnnouncement from "../pages/owner/CreateAnnouncement";
+import ViewRoomAllocations from "../pages/owner/ViewRoomAllocations";
+import MyRoomAllocation from "../pages/student/MyRoomAllocation";
 
 function AppRoutes() {
   return (
@@ -43,10 +45,14 @@ function AppRoutes() {
         />
 
         <Route path="announcements/add" element={<CreateAnnouncement />} />
+
+        <Route path="room-allocations" element={<ViewRoomAllocations />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
         <Route path="dashboard" element={<StudentDashboard />} />
+
+        <Route path="room-allocation" element={<MyRoomAllocation />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />
