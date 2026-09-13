@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { apiRequest } from "../../services/api";
 
+const today = new Date().toISOString().split("T")[0];
+
 function CreateAnnouncement() {
   const [formData, setFormData] = useState({
     title: "",
@@ -86,6 +88,7 @@ function CreateAnnouncement() {
             name="announcement_date"
             value={formData.announcement_date}
             onChange={handleChange}
+            min={today}
             required
           />
         </div>

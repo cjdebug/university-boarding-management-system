@@ -38,6 +38,13 @@ import OperationsManagement from "../pages/owner/OperationsManagement";
 import SubmitComplaint from "../pages/student/SubmitComplaint";
 import MyComplaints from "../pages/student/MyComplaints";
 import ViewComplaints from "../pages/owner/ViewComplaints";
+import OwnerViewAnnouncements from "../pages/owner/ViewAnnouncements";
+import StudentViewAnnouncements from "../pages/student/ViewAnnouncements";
+import SubmitFeedback from "../pages/student/SubmitFeedback";
+import MyFeedback from "../pages/student/MyFeedback";
+import ViewFeedback from "../pages/owner/ViewFeedback";
+import StudentFeedbackManagement from "../pages/student/StudentFeedbackManagement";
+import CommunicationTurnoverManagement from "../pages/owner/CommunicationTurnoverManagement";
 
 function AppRoutes() {
   return (
@@ -98,6 +105,15 @@ function AppRoutes() {
         <Route path="operations" element={<OperationsManagement />} />
 
         <Route path="complaints" element={<ViewComplaints />} />
+
+        <Route path="announcements" element={<OwnerViewAnnouncements />} />
+
+        <Route path="feedback" element={<ViewFeedback />} />
+
+        <Route
+          path="communication-turnover"
+          element={<CommunicationTurnoverManagement />}
+        />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
@@ -137,6 +153,17 @@ function AppRoutes() {
         <Route path="complaint" element={<SubmitComplaint />} />
 
         <Route path="complaints" element={<MyComplaints />} />
+
+        <Route path="announcements" element={<StudentViewAnnouncements />} />
+
+        <Route path="feedback/add" element={<SubmitFeedback />} />
+
+        <Route path="feedback" element={<MyFeedback />} />
+
+        <Route
+          path="feedback-management"
+          element={<StudentFeedbackManagement />}
+        />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />
