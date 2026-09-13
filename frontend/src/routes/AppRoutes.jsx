@@ -30,6 +30,14 @@ import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
 import MyLeaveRequests from "../pages/student/MyLeaveRequests";
 import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
 import ViewLeaveRequests from "../pages/owner/ViewLeaveRequests";
+import SubmitMaintenanceRequest from "../pages/student/SubmitMaintenanceRequest";
+import MyMaintenanceRequests from "../pages/student/MyMaintenanceRequests";
+import StudentOperationsManagement from "../pages/student/StudentOperationsManagement";
+import ViewMaintenanceRequests from "../pages/owner/ViewMaintenanceRequests";
+import OperationsManagement from "../pages/owner/OperationsManagement";
+import SubmitComplaint from "../pages/student/SubmitComplaint";
+import MyComplaints from "../pages/student/MyComplaints";
+import ViewComplaints from "../pages/owner/ViewComplaints";
 
 function AppRoutes() {
   return (
@@ -81,6 +89,15 @@ function AppRoutes() {
         />
 
         <Route path="leave-requests" element={<ViewLeaveRequests />} />
+
+        <Route
+          path="maintenance-requests"
+          element={<ViewMaintenanceRequests />}
+        />
+
+        <Route path="operations" element={<OperationsManagement />} />
+
+        <Route path="complaints" element={<ViewComplaints />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
@@ -104,6 +121,22 @@ function AppRoutes() {
           path="attendance-management"
           element={<StudentAttendanceManagement />}
         />
+
+        <Route
+          path="maintenance-request"
+          element={<SubmitMaintenanceRequest />}
+        />
+
+        <Route
+          path="maintenance-requests"
+          element={<MyMaintenanceRequests />}
+        />
+
+        <Route path="operations" element={<StudentOperationsManagement />} />
+
+        <Route path="complaint" element={<SubmitComplaint />} />
+
+        <Route path="complaints" element={<MyComplaints />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

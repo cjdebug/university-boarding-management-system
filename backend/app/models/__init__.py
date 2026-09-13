@@ -9,3 +9,4 @@ from app.models.maintenance_request import MaintenanceRequest
 from app.models.announcement import Announcement
 from app.models.payment import Payment
 from app.models.leave_request import LeaveRequest
+from app.models.complaint import Complaint

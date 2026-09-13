@@ -4,11 +4,8 @@ from pydantic import BaseModel
 
 
 class MaintenanceRequestCreate(BaseModel):
-    student_id: int
-    room_id: int
     issue_type: str
     description: str
-    request_date: date
 
 
 class MaintenanceRequestResponse(BaseModel):
