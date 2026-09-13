@@ -23,6 +23,13 @@ import RecordPayment from "../pages/owner/RecordPayment";
 import ViewPaymentHistory from "../pages/owner/ViewPaymentHistory";
 import MyPaymentHistory from "../pages/student/MyPaymentHistory";
 import StudentFeePaymentManagement from "../pages/student/StudentFeePaymentManagement";
+import ViewAttendanceRecords from "../pages/owner/ViewAttendanceRecords";
+import AttendanceManagement from "../pages/owner/AttendanceManagement";
+import MyAttendance from "../pages/student/MyAttendance";
+import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
+import MyLeaveRequests from "../pages/student/MyLeaveRequests";
+import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
+import ViewLeaveRequests from "../pages/owner/ViewLeaveRequests";
 
 function AppRoutes() {
   return (
@@ -65,6 +72,15 @@ function AppRoutes() {
         <Route path="payments/add" element={<RecordPayment />} />
 
         <Route path="payments" element={<ViewPaymentHistory />} />
+
+        <Route path="attendance" element={<ViewAttendanceRecords />} />
+
+        <Route
+          path="attendance-management"
+          element={<AttendanceManagement />}
+        />
+
+        <Route path="leave-requests" element={<ViewLeaveRequests />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
@@ -77,6 +93,17 @@ function AppRoutes() {
         <Route path="payment-history" element={<MyPaymentHistory />} />
 
         <Route path="fee-payments" element={<StudentFeePaymentManagement />} />
+
+        <Route path="attendance" element={<MyAttendance />} />
+
+        <Route path="leave-request" element={<SubmitLeaveRequest />} />
+
+        <Route path="leave-requests" element={<MyLeaveRequests />} />
+
+        <Route
+          path="attendance-management"
+          element={<StudentAttendanceManagement />}
+        />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

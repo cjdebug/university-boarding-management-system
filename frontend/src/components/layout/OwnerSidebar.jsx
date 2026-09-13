@@ -30,7 +30,7 @@ function OwnerSidebar() {
     },
     {
       label: "Attendance Management",
-      path: "/owner/attendance/add",
+      path: "/owner/attendance-management",
       icon: CalendarCheck,
     },
     {
