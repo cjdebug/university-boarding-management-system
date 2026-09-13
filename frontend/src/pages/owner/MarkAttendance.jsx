@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 
+const today = new Date().toISOString().split("T")[0];
+
 function MarkAttendance() {
+  const [students, setStudents] = useState([]);
+
   const [formData, setFormData] = useState({
     student_id: "",
-    attendance_date: "",
+    attendance_date: today,
     attendance_status: "",
     note: "",
   });
@@ -12,44 +16,57 @@ function MarkAttendance() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const data = await apiRequest("/students");
+        setStudents(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
 
+    fetchStudents();
+  }, []);
+
+  const handleChange = (e) => {
     setFormData({
       ...formData,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     setMessage("");
     setError("");
 
     try {
-      const data = await apiRequest("/attendance", {
+      const dataToSend = {
+        student_id: Number(formData.student_id),
+        attendance_date: formData.attendance_date,
+        attendance_status: formData.attendance_status,
+        note: formData.note || null,
+      };
+
+      const createdAttendance = await apiRequest("/attendance", {
         method: "POST",
-        body: JSON.stringify({
-          student_id: Number(formData.student_id),
-          attendance_date: formData.attendance_date,
-          attendance_status: formData.attendance_status,
-          note: formData.note || null,
-        }),
+        body: JSON.stringify(dataToSend),
       });
 
       setMessage(
-        `Attendance record ${data.attendance_id} created successfully`,
+        `Attendance marked successfully. Attendance ID: ${createdAttendance.attendance_id}`,
       );
 
       setFormData({
         student_id: "",
-        attendance_date: "",
+        attendance_date: today,
         attendance_status: "",
         note: "",
       });
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -57,32 +74,48 @@ function MarkAttendance() {
     <div>
       <h1>Mark Attendance</h1>
 
+      {message && <p>{message}</p>}
+      {error && <p>{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Student ID</label>
-          <input
-            type="number"
+          <label>Student</label>
+          <br />
+
+          <select
             name="student_id"
             value={formData.student_id}
             onChange={handleChange}
-            min="1"
             required
-          />
+          >
+            <option value="">Select Student</option>
+
+            {students.map((student) => (
+              <option key={student.student_id} value={student.student_id}>
+                {student.registration_no} - {student.full_name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
           <label>Attendance Date</label>
+          <br />
+
           <input
             type="date"
             name="attendance_date"
             value={formData.attendance_date}
             onChange={handleChange}
+            max={today}
             required
           />
         </div>
 
         <div>
-          <label>Status</label>
+          <label>Attendance Status</label>
+          <br />
+
           <select
             name="attendance_status"
             value={formData.attendance_status}
@@ -93,20 +126,20 @@ function MarkAttendance() {
             <option value="present">Present</option>
             <option value="absent">Absent</option>
             <option value="late">Late</option>
-            <option value="leave">Leave</option>
           </select>
         </div>
 
         <div>
           <label>Note</label>
+          <br />
+
           <textarea name="note" value={formData.note} onChange={handleChange} />
         </div>
 
+        <br />
+
         <button type="submit">Mark Attendance</button>
       </form>
-
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
     </div>
   );
 }

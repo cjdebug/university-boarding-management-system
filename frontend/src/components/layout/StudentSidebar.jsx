@@ -30,7 +30,7 @@ function StudentSidebar({ studentName, studentId }) {
     },
     {
       label: "Attendance",
-      path: "/student/attendance",
+      path: "/student/attendance-management",
       icon: CalendarCheck,
     },
     {

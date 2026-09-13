@@ -11,6 +11,7 @@ from app.routers.maintenance_requests import router as maintenance_requests_rout
 from app.routers.announcements import router as announcements_router
 from app.routers.students import router as students_router
 from app.routers.payments import router as payments_router
+from app.routers.leave_requests import router as leave_requests_router
 
 from app.core.config import settings
 from app.database.connection import engine
@@ -42,6 +43,7 @@ app.include_router(maintenance_requests_router)
 app.include_router(announcements_router)
 app.include_router(students_router)
 app.include_router(payments_router)
+app.include_router(leave_requests_router)
 
 
 @app.get("/")
