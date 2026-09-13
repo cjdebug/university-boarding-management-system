@@ -50,7 +50,7 @@ function StudentSidebar({ studentName, studentId }) {
     },
     {
       label: "My Requests",
-      path: "/student/requests",
+      path: "/student/operations",
       icon: ClipboardList,
     },
   ];
