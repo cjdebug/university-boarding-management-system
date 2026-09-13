@@ -15,6 +15,7 @@ router = APIRouter(
 )
 
 
+# OWNER - create announcement
 @router.post(
     "",
     response_model=AnnouncementResponse,
@@ -37,3 +38,16 @@ def create_announcement(
     db.refresh(new_announcement)
 
     return new_announcement
+
+
+# OWNER + STUDENT - read announcements
+@router.get(
+    "",
+    response_model=list[AnnouncementResponse],
+)
+def get_announcements(
+    db: Session = Depends(get_db),
+):
+    announcements = db.query(Announcement).all()
+
+    return announcements

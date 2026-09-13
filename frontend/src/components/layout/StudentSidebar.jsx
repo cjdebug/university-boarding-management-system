@@ -45,7 +45,7 @@ function StudentSidebar({ studentName, studentId }) {
     },
     {
       label: "Student Feedback",
-      path: "/student/feedback",
+      path: "/student/feedback-management",
       icon: Star,
     },
     {
