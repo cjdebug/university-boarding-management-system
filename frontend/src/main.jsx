@@ -6,6 +6,7 @@ import App from "./App.jsx";
 
 import "./assets/styles/variables.css";
 import "./assets/styles/globals.css";
+import "./styles/common.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

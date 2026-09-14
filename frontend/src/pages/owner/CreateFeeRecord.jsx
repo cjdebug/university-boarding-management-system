@@ -74,90 +74,94 @@ function CreateFeeRecord() {
   };
 
   return (
-    <div>
-      <h1>Create Fee Record</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Create Fee Record</h1>
+        <p>Add a new boarding fee record for a student.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Student</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="student_id"
-            value={formData.student_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Student</option>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-grid">
+          <div className="form-group">
+            <label>Student</label>
 
-            {students.map((student) => (
-              <option key={student.student_id} value={student.student_id}>
-                {student.registration_no} - {student.full_name}
-              </option>
-            ))}
-          </select>
-        </div>
+            <select
+              name="student_id"
+              value={formData.student_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Student</option>
 
-        <div>
-          <label>Fee Type</label>
-          <br />
+              {students.map((student) => (
+                <option key={student.student_id} value={student.student_id}>
+                  {student.registration_no} - {student.full_name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <input
-            type="text"
-            name="fee_type"
-            value={formData.fee_type}
-            onChange={handleChange}
-            placeholder="Example: Monthly Boarding Fee"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Fee Type</label>
 
-        <div>
-          <label>Amount</label>
-          <br />
+            <input
+              type="text"
+              name="fee_type"
+              value={formData.fee_type}
+              onChange={handleChange}
+              placeholder="Monthly Boarding Fee"
+              required
+            />
+          </div>
 
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            min="0"
-            step="0.01"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Amount</label>
 
-        <div>
-          <label>Due Date</label>
-          <br />
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
 
-          <input
-            type="date"
-            name="due_date"
-            value={formData.due_date}
-            onChange={handleChange}
-            min={today}
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Due Date</label>
 
-        <div>
-          <label>Description</label>
-          <br />
+            <input
+              type="date"
+              name="due_date"
+              value={formData.due_date}
+              onChange={handleChange}
+              min={today}
+              required
+            />
+          </div>
 
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
+          <div className="form-group full-width">
+            <label>Description</label>
+
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Optional description"
+            />
+          </div>
         </div>
 
         <br />
 
-        <button type="submit">Create Fee Record</button>
+        <button type="submit" className="btn btn-primary">
+          Create Fee Record
+        </button>
       </form>
     </div>
   );
