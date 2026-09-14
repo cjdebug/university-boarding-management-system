@@ -22,43 +22,70 @@ function MyRoomAllocation() {
   }, []);
 
   if (loading) {
-    return <p>Loading room allocation...</p>;
-  }
-
-  if (error) {
     return (
-      <div>
-        <h1>My Room & Allocation</h1>
-        <p>{error}</p>
+      <div className="page-container">
+        <div className="loading-text">Loading room allocation...</div>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1>My Room & Allocation</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>My Room & Allocation</h1>
+        <p>View your current boarding room and allocation details.</p>
+      </div>
+
+      {error && <div className="message-error">{error}</div>}
+
+      {!error && !allocation && (
+        <div className="empty-state">No active room allocation found.</div>
+      )}
 
       {allocation && (
-        <div>
-          <p>
-            <strong>Allocation ID:</strong> {allocation.allocation_id}
-          </p>
-          <p>
-            <strong>Room ID:</strong> {allocation.room_id}
-          </p>
-          <p>
-            <strong>Bed Number:</strong> {allocation.bed_number || "-"}
-          </p>
-          <p>
-            <strong>Allocation Date:</strong> {allocation.allocation_date}
-          </p>
-          <p>
-            <strong>Expected Checkout:</strong>{" "}
-            {allocation.expected_checkout_date || "-"}
-          </p>
-          <p>
-            <strong>Status:</strong> {allocation.allocation_status}
-          </p>
+        <div className="form-card">
+          <div className="form-section">
+            <h3>Current Allocation</h3>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Allocation ID</label>
+                <p>{allocation.allocation_id}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Room ID</label>
+                <p>{allocation.room_id}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Bed Number</label>
+                <p>{allocation.bed_number || "-"}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Allocation Date</label>
+                <p>{allocation.allocation_date}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Expected Checkout</label>
+                <p>{allocation.expected_checkout_date || "-"}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Status</label>
+
+                <p>
+                  <span
+                    className={`status-badge status-${allocation.allocation_status}`}
+                  >
+                    {allocation.allocation_status}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
