@@ -7,108 +7,147 @@ function CreateAnnouncement() {
   const [formData, setFormData] = useState({
     title: "",
     message: "",
-    announcement_date: "",
-    audience: "all_students",
+    announcement_date: today,
+    audience: "All Students",
+    status: "active",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
+  const handleChange = (e) => {
     setFormData({
       ...formData,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     setSuccessMessage("");
     setError("");
 
     try {
-      const data = await apiRequest("/announcements", {
+      const dataToSend = {
+        title: formData.title,
+        message: formData.message,
+        announcement_date: formData.announcement_date,
+        audience: formData.audience,
+        status: formData.status,
+      };
+
+      const createdAnnouncement = await apiRequest("/announcements", {
         method: "POST",
-        body: JSON.stringify({
-          title: formData.title,
-          message: formData.message,
-          announcement_date: formData.announcement_date,
-          audience: formData.audience,
-        }),
+        body: JSON.stringify(dataToSend),
       });
 
       setSuccessMessage(
-        `Announcement ${data.announcement_id} created successfully`,
+        `Announcement created successfully. Announcement ID: ${createdAnnouncement.announcement_id}`,
       );
 
       setFormData({
         title: "",
         message: "",
-        announcement_date: "",
-        audience: "all_students",
+        announcement_date: today,
+        audience: "All Students",
+        status: "active",
       });
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div>
-      <h1>Create Announcement</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Create Announcement</h1>
+        <p>Create a new boarding announcement for student residents.</p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
+      {successMessage && (
+        <div className="message-success">{successMessage}</div>
+      )}
+
+      {error && <div className="message-error">{error}</div>}
+
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Announcement Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Title</label>
+
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter announcement title"
+                required
+              />
+            </div>
+
+            <div className="form-group full-width">
+              <label>Message</label>
+
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Enter announcement message"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Announcement Date</label>
+
+              <input
+                type="date"
+                name="announcement_date"
+                value={formData.announcement_date}
+                onChange={handleChange}
+                min={today}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Audience</label>
+
+              <select
+                name="audience"
+                value={formData.audience}
+                onChange={handleChange}
+                required
+              >
+                <option value="All Students">All Students</option>
+                <option value="Residents">Residents</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Status</label>
+
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Message</label>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Announcement Date</label>
-          <input
-            type="date"
-            name="announcement_date"
-            value={formData.announcement_date}
-            onChange={handleChange}
-            min={today}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Audience</label>
-          <select
-            name="audience"
-            value={formData.audience}
-            onChange={handleChange}
-          >
-            <option value="all_students">All Students</option>
-          </select>
-        </div>
-
-        <button type="submit">Create Announcement</button>
+        <button type="submit" className="btn btn-primary">
+          Create Announcement
+        </button>
       </form>
-
-      {successMessage && <p>{successMessage}</p>}
-      {error && <p>{error}</p>}
     </div>
   );
 }

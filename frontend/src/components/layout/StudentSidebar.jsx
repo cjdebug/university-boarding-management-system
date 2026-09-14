@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import {
   House,
   UserRound,
@@ -6,12 +7,14 @@ import {
   CalendarCheck,
   CreditCard,
   Megaphone,
-  Star,
-  ClipboardList,
+  MessageSquare,
+  Wrench,
   LogOut,
 } from "lucide-react";
 
-function StudentSidebar({ studentName, studentId }) {
+function StudentSidebar() {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       label: "Dashboard",
@@ -46,30 +49,37 @@ function StudentSidebar({ studentName, studentId }) {
     {
       label: "Student Feedback",
       path: "/student/feedback-management",
-      icon: Star,
+      icon: MessageSquare,
     },
     {
       label: "My Requests",
       path: "/student/operations",
-      icon: ClipboardList,
+      icon: Wrench,
     },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_role");
+
+    navigate("/login");
+  };
+
   return (
     <aside className="sidebar">
-      {/* Brand / System Name */}
       <div className="sidebar-brand">
         <div className="sidebar-logo">
-          <House size={30} strokeWidth={1.8} />
+          <House size={29} strokeWidth={1.8} />
         </div>
 
-        <div>
+        <div className="sidebar-brand-text">
           <h2>Boarding System</h2>
           <p>Student Portal</p>
         </div>
       </div>
 
-      {/* Navigation Menu */}
+      <div className="sidebar-section-label">STUDENT PORTAL</div>
+
       <nav className="sidebar-menu">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -87,23 +97,27 @@ function StudentSidebar({ studentName, studentId }) {
             </NavLink>
           );
         })}
+      </nav>
 
-        {/* Logout */}
-        <button className="sidebar-link sidebar-logout" type="button">
+      <div className="sidebar-bottom">
+        <button
+          className="sidebar-link sidebar-logout"
+          type="button"
+          onClick={handleLogout}
+        >
           <LogOut size={20} strokeWidth={1.8} />
           <span>Logout</span>
         </button>
-      </nav>
 
-      {/* Logged-in Student Information */}
-      <div className="sidebar-profile">
-        <div className="sidebar-profile-avatar">
-          <UserRound size={22} />
-        </div>
+        <div className="sidebar-profile">
+          <div className="sidebar-profile-avatar">
+            <UserRound size={21} />
+          </div>
 
-        <div className="sidebar-profile-text">
-          <strong>{studentName}</strong>
-          <span>{studentId}</span>
+          <div className="sidebar-profile-text">
+            <strong>Student Resident</strong>
+            <span>Boarding Student</span>
+          </div>
         </div>
       </div>
     </aside>

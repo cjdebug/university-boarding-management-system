@@ -4,16 +4,29 @@ function StudentFeedbackManagement() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>Student Feedback</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Student Feedback</h1>
+        <p>Submit feedback and review the feedback you have already sent.</p>
+      </div>
 
-      <p>Submit feedback and view your previous feedback.</p>
+      <div className="action-grid">
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/feedback/add")}
+        >
+          <h3>Submit Feedback</h3>
+          <p>Share feedback about your boarding experience.</p>
+        </div>
 
-      <button onClick={() => navigate("/student/feedback/add")}>
-        Submit Feedback
-      </button>
-
-      <button onClick={() => navigate("/student/feedback")}>My Feedback</button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/feedback")}
+        >
+          <h3>My Feedback</h3>
+          <p>Review feedback you have previously submitted.</p>
+        </div>
+      </div>
     </div>
   );
 }

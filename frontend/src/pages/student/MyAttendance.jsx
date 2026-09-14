@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 
 function MyAttendance() {
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -10,7 +10,7 @@ function MyAttendance() {
     const fetchMyAttendance = async () => {
       try {
         const data = await apiRequest("/attendance/my");
-        setAttendanceRecords(data);
+        setRecords(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -22,39 +22,63 @@ function MyAttendance() {
   }, []);
 
   if (loading) {
-    return <p>Loading attendance records...</p>;
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading attendance records...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>My Attendance</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>My Attendance</h1>
+        <p>View your attendance history and recorded attendance status.</p>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <div className="message-error">{error}</div>}
 
-      {!error && attendanceRecords.length === 0 && (
-        <p>No attendance records found.</p>
+      {!error && records.length === 0 && (
+        <div className="empty-state">No attendance records found.</div>
       )}
 
-      {attendanceRecords.length > 0 && (
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Note</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {attendanceRecords.map((record) => (
-              <tr key={record.attendance_id}>
-                <td>{record.attendance_date}</td>
-                <td>{record.attendance_status}</td>
-                <td>{record.note || "-"}</td>
+      {records.length > 0 && (
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Attendance ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Remarks</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {records.map((record) => {
+                const status =
+                  record.status || record.attendance_status || "Unknown";
+
+                return (
+                  <tr key={record.attendance_id}>
+                    <td>{record.attendance_id}</td>
+                    <td>{record.attendance_date || record.date || "-"}</td>
+
+                    <td>
+                      <span
+                        className={`status-badge status-${status.toLowerCase()}`}
+                      >
+                        {status}
+                      </span>
+                    </td>
+
+                    <td>{record.remarks || "-"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -23,7 +23,6 @@ function RecordPayment() {
       try {
         const data = await apiRequest("/fee-records");
 
-        // Only show fees that are not fully paid
         const unpaidFees = data.filter((fee) => fee.fee_status !== "paid");
 
         setFeeRecords(unpaidFees);
@@ -81,101 +80,113 @@ function RecordPayment() {
   };
 
   return (
-    <div>
-      <h1>Record Payment</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Record Payment</h1>
+        <p>Record a full or partial boarding fee payment made by a student.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Fee Record</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="fee_record_id"
-            value={formData.fee_record_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Fee Record</option>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-grid">
+          <div className="form-group full-width">
+            <label>Fee Record</label>
 
-            {feeRecords.map((fee) => (
-              <option key={fee.fee_record_id} value={fee.fee_record_id}>
-                Fee #{fee.fee_record_id} - Student {fee.student_id} -{" "}
-                {fee.fee_type} - Rs. {fee.amount}
-              </option>
-            ))}
-          </select>
-        </div>
+            <select
+              name="fee_record_id"
+              value={formData.fee_record_id}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Fee Record</option>
 
-        <div>
-          <label>Payment Amount</label>
-          <br />
+              {feeRecords.map((fee) => (
+                <option key={fee.fee_record_id} value={fee.fee_record_id}>
+                  Fee #{fee.fee_record_id} - Student {fee.student_id}
+                  {" - "}
+                  {fee.fee_type}
+                  {" - Rs. "}
+                  {fee.amount}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            min="0.01"
-            step="0.01"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Payment Amount</label>
 
-        <div>
-          <label>Payment Date</label>
-          <br />
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              min="0.01"
+              step="0.01"
+              placeholder="Enter payment amount"
+              required
+            />
+          </div>
 
-          <input
-            type="date"
-            name="payment_date"
-            value={formData.payment_date}
-            onChange={handleChange}
-            max={today}
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Payment Date</label>
 
-        <div>
-          <label>Payment Method</label>
-          <br />
+            <input
+              type="date"
+              name="payment_date"
+              value={formData.payment_date}
+              onChange={handleChange}
+              max={today}
+              required
+            />
+          </div>
 
-          <select
-            name="payment_method"
-            value={formData.payment_method}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Payment Method</option>
-            <option value="Cash">Cash</option>
-            <option value="Bank Transfer">Bank Transfer</option>
-          </select>
-        </div>
+          <div className="form-group">
+            <label>Payment Method</label>
 
-        <div>
-          <label>Reference Number</label>
-          <br />
+            <select
+              name="payment_method"
+              value={formData.payment_method}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Payment Method</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
 
-          <input
-            type="text"
-            name="reference_no"
-            value={formData.reference_no}
-            onChange={handleChange}
-          />
-        </div>
+          <div className="form-group">
+            <label>Reference Number</label>
 
-        <div>
-          <label>Note</label>
-          <br />
+            <input
+              type="text"
+              name="reference_no"
+              value={formData.reference_no}
+              onChange={handleChange}
+              placeholder="Optional"
+            />
+          </div>
 
-          <textarea name="note" value={formData.note} onChange={handleChange} />
+          <div className="form-group full-width">
+            <label>Note</label>
+
+            <textarea
+              name="note"
+              value={formData.note}
+              onChange={handleChange}
+              placeholder="Optional payment note"
+            />
+          </div>
         </div>
 
         <br />
 
-        <button type="submit">Record Payment</button>
+        <button type="submit" className="btn btn-primary">
+          Record Payment
+        </button>
       </form>
     </div>
   );

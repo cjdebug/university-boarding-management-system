@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 
 function ViewFeedback() {
-  const [feedback, setFeedback] = useState([]);
+  const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -10,7 +10,7 @@ function ViewFeedback() {
     const fetchFeedback = async () => {
       try {
         const data = await apiRequest("/feedback");
-        setFeedback(data);
+        setFeedbackList(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -22,43 +22,66 @@ function ViewFeedback() {
   }, []);
 
   if (loading) {
-    return <p>Loading feedback...</p>;
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading student feedback...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>Student Feedback</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Student Feedback</h1>
+        <p>Review feedback submitted by student residents.</p>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <div className="message-error">{error}</div>}
 
-      {!error && feedback.length === 0 && <p>No feedback found.</p>}
+      {!error && feedbackList.length === 0 && (
+        <div className="empty-state">No feedback found.</div>
+      )}
 
-      {feedback.length > 0 && (
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Feedback ID</th>
-              <th>Student ID</th>
-              <th>Type</th>
-              <th>Message</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {feedback.map((item) => (
-              <tr key={item.feedback_id}>
-                <td>{item.feedback_id}</td>
-                <td>{item.student_id}</td>
-                <td>{item.feedback_type}</td>
-                <td>{item.message}</td>
-                <td>{item.feedback_date}</td>
-                <td>{item.feedback_status}</td>
+      {feedbackList.length > 0 && (
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Feedback ID</th>
+                <th>Student ID</th>
+                <th>Feedback Type</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {feedbackList.map((feedback) => {
+                const status =
+                  feedback.feedback_status || feedback.status || "Submitted";
+
+                return (
+                  <tr key={feedback.feedback_id}>
+                    <td>{feedback.feedback_id}</td>
+                    <td>{feedback.student_id}</td>
+                    <td>{feedback.feedback_type}</td>
+                    <td>{feedback.message}</td>
+                    <td>{feedback.feedback_date || "-"}</td>
+
+                    <td>
+                      <span
+                        className={`status-badge status-${status.toLowerCase()}`}
+                      >
+                        {status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -21,7 +21,6 @@ function AllocateRoom() {
     const fetchStudents = async () => {
       try {
         const data = await apiRequest("/students");
-
         setStudents(data);
       } catch (err) {
         setError(err.message);
@@ -75,88 +74,96 @@ function AllocateRoom() {
   };
 
   return (
-    <div>
-      <h1>Allocate Room to Student</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Allocate Room</h1>
+        <p>Assign an available room and bed space to a student resident.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Student</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="student_id"
-            value={formData.student_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Student</option>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Allocation Details</h3>
 
-            {students.map((student) => (
-              <option key={student.student_id} value={student.student_id}>
-                {student.registration_no} - {student.full_name}
-              </option>
-            ))}
-          </select>
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Student</label>
+
+              <select
+                name="student_id"
+                value={formData.student_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Student</option>
+
+                {students.map((student) => (
+                  <option key={student.student_id} value={student.student_id}>
+                    {student.registration_no} - {student.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Room ID</label>
+
+              <input
+                type="number"
+                name="room_id"
+                value={formData.room_id}
+                onChange={handleChange}
+                min="1"
+                placeholder="Enter room ID"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Bed Number</label>
+
+              <input
+                type="text"
+                name="bed_number"
+                value={formData.bed_number}
+                onChange={handleChange}
+                placeholder="Example: B1"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Allocation Date</label>
+
+              <input
+                type="date"
+                name="allocation_date"
+                value={formData.allocation_date}
+                onChange={handleChange}
+                min={today}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Expected Checkout Date</label>
+
+              <input
+                type="date"
+                name="expected_checkout_date"
+                value={formData.expected_checkout_date}
+                onChange={handleChange}
+                min={formData.allocation_date || today}
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Room ID</label>
-          <br />
-
-          <input
-            type="number"
-            name="room_id"
-            value={formData.room_id}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Bed Number</label>
-          <br />
-
-          <input
-            type="text"
-            name="bed_number"
-            value={formData.bed_number}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Allocation Date</label>
-          <br />
-
-          <input
-            type="date"
-            name="allocation_date"
-            value={formData.allocation_date}
-            onChange={handleChange}
-            min={today}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Expected Checkout Date</label>
-          <br />
-
-          <input
-            type="date"
-            name="expected_checkout_date"
-            value={formData.expected_checkout_date}
-            onChange={handleChange}
-            min={formData.allocation_date || today}
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Allocate Room</button>
+        <button type="submit" className="btn btn-primary">
+          Allocate Room
+        </button>
       </form>
     </div>
   );

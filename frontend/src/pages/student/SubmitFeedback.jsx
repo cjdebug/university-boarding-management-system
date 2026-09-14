@@ -7,7 +7,7 @@ function SubmitFeedback() {
     message: "",
   });
 
-  const [message, setMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -20,16 +20,21 @@ function SubmitFeedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setMessage("");
+    setSuccessMessage("");
     setError("");
 
     try {
+      const dataToSend = {
+        feedback_type: formData.feedback_type,
+        message: formData.message,
+      };
+
       const createdFeedback = await apiRequest("/feedback", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
-      setMessage(
+      setSuccessMessage(
         `Feedback submitted successfully. Feedback ID: ${createdFeedback.feedback_id}`,
       );
 
@@ -43,47 +48,59 @@ function SubmitFeedback() {
   };
 
   return (
-    <div>
-      <h1>Submit Feedback</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Submit Feedback</h1>
+        <p>Share feedback about your boarding experience.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {successMessage && (
+        <div className="message-success">{successMessage}</div>
+      )}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Feedback Type</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="feedback_type"
-            value={formData.feedback_type}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Feedback Type</option>
-            <option value="Facilities">Facilities</option>
-            <option value="Cleanliness">Cleanliness</option>
-            <option value="Services">Services</option>
-            <option value="Safety">Safety</option>
-            <option value="General">General</option>
-          </select>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Feedback Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Feedback Type</label>
+
+              <select
+                name="feedback_type"
+                value={formData.feedback_type}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Feedback Type</option>
+                <option value="Suggestion">Suggestion</option>
+                <option value="Complaint">Complaint</option>
+                <option value="Facilities">Facilities</option>
+                <option value="Cleanliness">Cleanliness</option>
+                <option value="Service">Service</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group full-width">
+              <label>Message</label>
+
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Write your feedback here"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Message</label>
-          <br />
-
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Submit Feedback</button>
+        <button type="submit" className="btn btn-primary">
+          Submit Feedback
+        </button>
       </form>
     </div>
   );

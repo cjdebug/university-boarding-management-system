@@ -7,7 +7,7 @@ function MyComplaints() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchComplaints = async () => {
+    const fetchMyComplaints = async () => {
       try {
         const data = await apiRequest("/complaints/my");
         setComplaints(data);
@@ -18,45 +18,68 @@ function MyComplaints() {
       }
     };
 
-    fetchComplaints();
+    fetchMyComplaints();
   }, []);
 
   if (loading) {
-    return <p>Loading complaints...</p>;
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading complaints...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>My Complaints</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>My Complaints</h1>
+        <p>Review the complaints you have submitted.</p>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <div className="message-error">{error}</div>}
 
-      {!error && complaints.length === 0 && <p>No complaints found.</p>}
+      {!error && complaints.length === 0 && (
+        <div className="empty-state">No complaints found.</div>
+      )}
 
       {complaints.length > 0 && (
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Complaint ID</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {complaints.map((complaint) => (
-              <tr key={complaint.complaint_id}>
-                <td>{complaint.complaint_id}</td>
-                <td>{complaint.complaint_type}</td>
-                <td>{complaint.description}</td>
-                <td>{complaint.complaint_date}</td>
-                <td>{complaint.complaint_status}</td>
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Complaint Type</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {complaints.map((complaint) => {
+                const status =
+                  complaint.status || complaint.complaint_status || "Pending";
+
+                return (
+                  <tr key={complaint.complaint_id}>
+                    <td>{complaint.complaint_id}</td>
+                    <td>{complaint.complaint_type}</td>
+                    <td>{complaint.description}</td>
+                    <td>{complaint.complaint_date || complaint.date || "-"}</td>
+
+                    <td>
+                      <span
+                        className={`status-badge status-${status.toLowerCase()}`}
+                      >
+                        {status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

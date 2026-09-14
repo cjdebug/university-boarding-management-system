@@ -59,7 +59,7 @@ function AddStudent() {
       });
 
       setMessage(
-        `Student created successfully. Student ID: ${createdStudent.student_id}`,
+        `Student created successfully. Registration Number: ${createdStudent.registration_no}`,
       );
 
       setFormData({
@@ -84,183 +84,223 @@ function AddStudent() {
   };
 
   return (
-    <div>
-      <h1>Add Student</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Add Student</h1>
+        <p>Create a student login account and boarding resident profile.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <h3>Login Details</h3>
+      {error && <div className="message-error">{error}</div>}
 
-        <div>
-          <label>Username</label>
-          <br />
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Login Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Username</label>
+
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter username"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Temporary Password</label>
+
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter temporary password"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Temporary Password</label>
-          <br />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+        <div className="form-section">
+          <h3>Personal Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Full Name</label>
+
+              <input
+                type="text"
+                name="full_name"
+                value={formData.full_name}
+                onChange={handleChange}
+                placeholder="Enter student's full name"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Date of Birth</label>
+
+              <input
+                type="date"
+                name="date_of_birth"
+                value={formData.date_of_birth}
+                onChange={handleChange}
+                max={today}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Gender</label>
+
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Phone Number</label>
+
+              <input
+                type="text"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email address"
+              />
+            </div>
+
+            <div className="form-group full-width">
+              <label>Address</label>
+
+              <textarea
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter home address"
+              />
+            </div>
+          </div>
         </div>
 
-        <h3>Student Details</h3>
+        <div className="form-section">
+          <h3>Academic Details</h3>
 
-        <div>
-          <label>Full Name</label>
-          <br />
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleChange}
-            required
-          />
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Academic Institution</label>
+
+              <input
+                type="text"
+                name="academic_institution"
+                value={formData.academic_institution}
+                onChange={handleChange}
+                placeholder="University or institution"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Course Name</label>
+
+              <input
+                type="text"
+                name="course_name"
+                value={formData.course_name}
+                onChange={handleChange}
+                placeholder="Course or programme"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Date of Birth</label>
-          <br />
-          <input
-            type="date"
-            name="date_of_birth"
-            value={formData.date_of_birth}
-            onChange={handleChange}
-            max={today}
-          />
+        <div className="form-section">
+          <h3>Guardian Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Guardian Name</label>
+
+              <input
+                type="text"
+                name="guardian_name"
+                value={formData.guardian_name}
+                onChange={handleChange}
+                placeholder="Guardian's name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Guardian Phone</label>
+
+              <input
+                type="text"
+                name="guardian_phone"
+                value={formData.guardian_phone}
+                onChange={handleChange}
+                placeholder="Guardian's phone number"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Gender</label>
-          <br />
-          <select name="gender" value={formData.gender} onChange={handleChange}>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+        <div className="form-section">
+          <h3>Emergency Contact</h3>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Emergency Contact Name</label>
+
+              <input
+                type="text"
+                name="emergency_contact_name"
+                value={formData.emergency_contact_name}
+                onChange={handleChange}
+                placeholder="Contact person's name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Emergency Contact Phone</label>
+
+              <input
+                type="text"
+                name="emergency_contact_phone"
+                value={formData.emergency_contact_phone}
+                onChange={handleChange}
+                placeholder="Emergency phone number"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Phone Number</label>
-          <br />
-          <input
-            type="text"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Address</label>
-          <br />
-          <textarea
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </div>
-
-        <h3>Academic Details</h3>
-
-        <div>
-          <label>Academic Institution</label>
-          <br />
-          <input
-            type="text"
-            name="academic_institution"
-            value={formData.academic_institution}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Course Name</label>
-          <br />
-          <input
-            type="text"
-            name="course_name"
-            value={formData.course_name}
-            onChange={handleChange}
-          />
-        </div>
-
-        <h3>Guardian Details</h3>
-
-        <div>
-          <label>Guardian Name</label>
-          <br />
-          <input
-            type="text"
-            name="guardian_name"
-            value={formData.guardian_name}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Guardian Phone</label>
-          <br />
-          <input
-            type="text"
-            name="guardian_phone"
-            value={formData.guardian_phone}
-            onChange={handleChange}
-          />
-        </div>
-
-        <h3>Emergency Contact</h3>
-
-        <div>
-          <label>Emergency Contact Name</label>
-          <br />
-          <input
-            type="text"
-            name="emergency_contact_name"
-            value={formData.emergency_contact_name}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Emergency Contact Phone</label>
-          <br />
-          <input
-            type="text"
-            name="emergency_contact_phone"
-            value={formData.emergency_contact_phone}
-            onChange={handleChange}
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Add Student</button>
+        <button type="submit" className="btn btn-primary">
+          Add Student
+        </button>
       </form>
     </div>
   );

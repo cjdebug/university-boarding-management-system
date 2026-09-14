@@ -4,33 +4,44 @@ function StudentRoomManagement() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>Student & Room Allocation Management</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Student & Room Allocation</h1>
+        <p>Manage student residents, rooms, and room allocations.</p>
+      </div>
 
-      <p>Manage boarding rooms and allocate students to available rooms.</p>
+      <div className="action-grid">
+        <div
+          className="action-card"
+          onClick={() => navigate("/owner/students/add")}
+        >
+          <h3>Add Student</h3>
+          <p>Create a new student account and resident profile.</p>
+        </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "30px",
-        }}
-      >
-        <button onClick={() => navigate("/owner/room-allocations/add")}>
-          Allocate Room to Student
-        </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/owner/room-allocations/add")}
+        >
+          <h3>Allocate Room</h3>
+          <p>Assign an available room and bed to a student.</p>
+        </div>
 
-        <button onClick={() => navigate("/owner/rooms/add")}>
-          Add New Room
-        </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/owner/rooms/add")}
+        >
+          <h3>Add Room</h3>
+          <p>Add a new boarding room and capacity details.</p>
+        </div>
 
-        <button onClick={() => navigate("/owner/room-allocations")}>
-          View Room Allocations
-        </button>
-
-        <button onClick={() => navigate("/owner/students/add")}>
-          Add Student
-        </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/owner/room-allocations")}
+        >
+          <h3>View Room Allocations</h3>
+          <p>Review current student room and bed assignments.</p>
+        </div>
       </div>
     </div>
   );

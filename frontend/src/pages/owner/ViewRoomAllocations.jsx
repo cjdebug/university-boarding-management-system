@@ -22,45 +22,63 @@ function ViewRoomAllocations() {
   }, []);
 
   if (loading) {
-    return <p>Loading room allocations...</p>;
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading room allocations...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>Room Allocations</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Room Allocations</h1>
+        <p>Review current student room and bed assignments.</p>
+      </div>
 
-      {error && <p>{error}</p>}
+      {error && <div className="message-error">{error}</div>}
 
-      {!error && allocations.length === 0 && <p>No room allocations found.</p>}
+      {!error && allocations.length === 0 && (
+        <div className="empty-state">No room allocations found.</div>
+      )}
 
       {allocations.length > 0 && (
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Allocation ID</th>
-              <th>Student ID</th>
-              <th>Room ID</th>
-              <th>Bed Number</th>
-              <th>Allocation Date</th>
-              <th>Expected Checkout</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {allocations.map((allocation) => (
-              <tr key={allocation.allocation_id}>
-                <td>{allocation.allocation_id}</td>
-                <td>{allocation.student_id}</td>
-                <td>{allocation.room_id}</td>
-                <td>{allocation.bed_number || "-"}</td>
-                <td>{allocation.allocation_date}</td>
-                <td>{allocation.expected_checkout_date || "-"}</td>
-                <td>{allocation.allocation_status}</td>
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Allocation ID</th>
+                <th>Student ID</th>
+                <th>Room ID</th>
+                <th>Bed Number</th>
+                <th>Allocation Date</th>
+                <th>Expected Checkout</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {allocations.map((allocation) => (
+                <tr key={allocation.allocation_id}>
+                  <td>{allocation.allocation_id}</td>
+                  <td>{allocation.student_id}</td>
+                  <td>{allocation.room_id}</td>
+                  <td>{allocation.bed_number || "-"}</td>
+                  <td>{allocation.allocation_date}</td>
+                  <td>{allocation.expected_checkout_date || "-"}</td>
+
+                  <td>
+                    <span
+                      className={`status-badge status-${allocation.allocation_status}`}
+                    >
+                      {allocation.allocation_status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

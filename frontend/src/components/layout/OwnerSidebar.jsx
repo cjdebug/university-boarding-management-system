@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import {
   House,
   Users,
@@ -12,6 +13,8 @@ import {
 } from "lucide-react";
 
 function OwnerSidebar() {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       label: "Dashboard",
@@ -50,18 +53,27 @@ function OwnerSidebar() {
     },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_role");
+
+    navigate("/login");
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
         <div className="sidebar-logo">
-          <House size={30} strokeWidth={1.8} />
+          <House size={29} strokeWidth={1.8} />
         </div>
 
-        <div>
+        <div className="sidebar-brand-text">
           <h2>Boarding System</h2>
           <p>Management Portal</p>
         </div>
       </div>
+
+      <div className="sidebar-section-label">MANAGEMENT</div>
 
       <nav className="sidebar-menu">
         {menuItems.map((item) => {
@@ -80,21 +92,27 @@ function OwnerSidebar() {
             </NavLink>
           );
         })}
+      </nav>
 
-        <button className="sidebar-link sidebar-logout" type="button">
+      <div className="sidebar-bottom">
+        <button
+          className="sidebar-link sidebar-logout"
+          type="button"
+          onClick={handleLogout}
+        >
           <LogOut size={20} strokeWidth={1.8} />
           <span>Logout</span>
         </button>
-      </nav>
 
-      <div className="sidebar-profile">
-        <div className="sidebar-profile-avatar">
-          <UserRound size={22} />
-        </div>
+        <div className="sidebar-profile">
+          <div className="sidebar-profile-avatar">
+            <UserRound size={21} />
+          </div>
 
-        <div className="sidebar-profile-text">
-          <strong>Boarding Owner</strong>
-          <span>Administrator</span>
+          <div className="sidebar-profile-text">
+            <strong>Boarding Owner</strong>
+            <span>Administrator</span>
+          </div>
         </div>
       </div>
     </aside>
