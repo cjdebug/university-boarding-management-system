@@ -24,9 +24,14 @@ function SubmitMaintenanceRequest() {
     setError("");
 
     try {
+      const dataToSend = {
+        issue_type: formData.issue_type,
+        description: formData.description,
+      };
+
       const createdRequest = await apiRequest("/maintenance-requests", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       setMessage(
@@ -43,47 +48,58 @@ function SubmitMaintenanceRequest() {
   };
 
   return (
-    <div>
-      <h1>Submit Maintenance Request</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Submit Maintenance Request</h1>
+        <p>
+          Report a maintenance issue related to your assigned boarding room.
+        </p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Issue Type</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="issue_type"
-            value={formData.issue_type}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Issue Type</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Cleaning">Cleaning</option>
-            <option value="Other">Other</option>
-          </select>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Maintenance Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Issue Type</label>
+
+              <select
+                name="issue_type"
+                value={formData.issue_type}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Issue Type</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group full-width">
+              <label>Description</label>
+
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe the maintenance issue clearly"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Description</label>
-          <br />
-
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Submit Request</button>
+        <button type="submit" className="btn btn-primary">
+          Submit Maintenance Request
+        </button>
       </form>
     </div>
   );

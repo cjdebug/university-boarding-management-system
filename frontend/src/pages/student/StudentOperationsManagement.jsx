@@ -4,26 +4,45 @@ function StudentOperationsManagement() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>My Requests</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Boarding Operations</h1>
+        <p>Submit and review maintenance requests and complaints.</p>
+      </div>
 
-      <p>Submit and view boarding maintenance requests.</p>
+      <div className="action-grid">
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/maintenance-request")}
+        >
+          <h3>Submit Maintenance Request</h3>
+          <p>Report a maintenance issue in your assigned room.</p>
+        </div>
 
-      <button onClick={() => navigate("/student/maintenance-request")}>
-        Submit Maintenance Request
-      </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/maintenance-requests")}
+        >
+          <h3>My Maintenance Requests</h3>
+          <p>Review the maintenance requests you have submitted.</p>
+        </div>
 
-      <button onClick={() => navigate("/student/maintenance-requests")}>
-        My Maintenance Requests
-      </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/complaint")}
+        >
+          <h3>Submit Complaint</h3>
+          <p>Submit a complaint related to your boarding experience.</p>
+        </div>
 
-      <button onClick={() => navigate("/student/complaint")}>
-        Submit Complaint
-      </button>
-
-      <button onClick={() => navigate("/student/complaints")}>
-        My Complaints
-      </button>
+        <div
+          className="action-card"
+          onClick={() => navigate("/student/complaints")}
+        >
+          <h3>My Complaints</h3>
+          <p>Review the complaints you have submitted.</p>
+        </div>
+      </div>
     </div>
   );
 }

@@ -24,9 +24,14 @@ function SubmitComplaint() {
     setError("");
 
     try {
+      const dataToSend = {
+        complaint_type: formData.complaint_type,
+        description: formData.description,
+      };
+
       const createdComplaint = await apiRequest("/complaints", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       setMessage(
@@ -43,47 +48,57 @@ function SubmitComplaint() {
   };
 
   return (
-    <div>
-      <h1>Submit Complaint</h1>
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Submit Complaint</h1>
+        <p>Submit a complaint related to your boarding experience.</p>
+      </div>
 
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <div className="message-success">{message}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Complaint Type</label>
-          <br />
+      {error && <div className="message-error">{error}</div>}
 
-          <select
-            name="complaint_type"
-            value={formData.complaint_type}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Complaint Type</option>
-            <option value="Noise">Noise</option>
-            <option value="Cleanliness">Cleanliness</option>
-            <option value="Shared Facilities">Shared Facilities</option>
-            <option value="Behaviour">Behaviour</option>
-            <option value="Other">Other</option>
-          </select>
+      <form onSubmit={handleSubmit} className="form-card">
+        <div className="form-section">
+          <h3>Complaint Details</h3>
+
+          <div className="form-grid">
+            <div className="form-group full-width">
+              <label>Complaint Type</label>
+
+              <select
+                name="complaint_type"
+                value={formData.complaint_type}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Complaint Type</option>
+                <option value="Noise">Noise</option>
+                <option value="Cleanliness">Cleanliness</option>
+                <option value="Facilities">Facilities</option>
+                <option value="Roommate">Roommate</option>
+                <option value="Safety">Safety</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group full-width">
+              <label>Description</label>
+
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe your complaint clearly"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label>Description</label>
-          <br />
-
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">Submit Complaint</button>
+        <button type="submit" className="btn btn-primary">
+          Submit Complaint
+        </button>
       </form>
     </div>
   );
