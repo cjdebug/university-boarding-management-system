@@ -9,7 +9,7 @@ function MarkAttendance() {
   const [formData, setFormData] = useState({
     student_id: "",
     attendance_date: today,
-    status: "",
+    attendance_status: "",
     remarks: "",
   });
 
@@ -22,7 +22,11 @@ function MarkAttendance() {
         const data = await apiRequest("/students");
         setStudents(data);
       } catch (err) {
-        setError(err.message);
+        setError(
+          typeof err.message === "string"
+            ? err.message
+            : "Failed to load students.",
+        );
       }
     };
 
@@ -46,7 +50,7 @@ function MarkAttendance() {
       const dataToSend = {
         student_id: Number(formData.student_id),
         attendance_date: formData.attendance_date,
-        status: formData.status,
+        attendance_status: formData.attendance_status,
         remarks: formData.remarks || null,
       };
 
@@ -62,11 +66,17 @@ function MarkAttendance() {
       setFormData({
         student_id: "",
         attendance_date: today,
-        status: "",
+        attendance_status: "",
         remarks: "",
       });
     } catch (err) {
-      setError(err.message);
+      let errorMessage = "Failed to record attendance.";
+
+      if (typeof err.message === "string") {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     }
   };
 
@@ -122,8 +132,8 @@ function MarkAttendance() {
               <label>Status</label>
 
               <select
-                name="status"
-                value={formData.status}
+                name="attendance_status"
+                value={formData.attendance_status}
                 onChange={handleChange}
                 required
               >

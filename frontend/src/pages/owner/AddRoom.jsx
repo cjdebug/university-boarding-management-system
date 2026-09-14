@@ -4,10 +4,9 @@ import { apiRequest } from "../../services/api";
 function AddRoom() {
   const [formData, setFormData] = useState({
     room_number: "",
-    room_type: "",
+    floor_number: "",
     capacity: "",
-    monthly_fee: "",
-    room_status: "available",
+    description: "",
   });
 
   const [message, setMessage] = useState("");
@@ -29,10 +28,11 @@ function AddRoom() {
     try {
       const dataToSend = {
         room_number: formData.room_number,
-        room_type: formData.room_type || null,
+        floor_number: formData.floor_number
+          ? Number(formData.floor_number)
+          : null,
         capacity: Number(formData.capacity),
-        monthly_fee: formData.monthly_fee ? Number(formData.monthly_fee) : null,
-        room_status: formData.room_status,
+        description: formData.description || null,
       };
 
       const createdRoom = await apiRequest("/rooms", {
@@ -44,10 +44,9 @@ function AddRoom() {
 
       setFormData({
         room_number: "",
-        room_type: "",
+        floor_number: "",
         capacity: "",
-        monthly_fee: "",
-        room_status: "available",
+        description: "",
       });
     } catch (err) {
       setError(err.message);
@@ -84,14 +83,15 @@ function AddRoom() {
             </div>
 
             <div className="form-group">
-              <label>Room Type</label>
+              <label>Floor Number</label>
 
               <input
-                type="text"
-                name="room_type"
-                value={formData.room_type}
+                type="number"
+                name="floor_number"
+                value={formData.floor_number}
                 onChange={handleChange}
-                placeholder="Example: Double"
+                min="0"
+                placeholder="Example: 1"
               />
             </div>
 
@@ -109,32 +109,15 @@ function AddRoom() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Monthly Fee</label>
+            <div className="form-group full-width">
+              <label>Description</label>
 
-              <input
-                type="number"
-                name="monthly_fee"
-                value={formData.monthly_fee}
+              <textarea
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
-                min="0"
-                step="0.01"
-                placeholder="Optional"
+                placeholder="Example: First floor room near the study area"
               />
-            </div>
-
-            <div className="form-group">
-              <label>Room Status</label>
-
-              <select
-                name="room_status"
-                value={formData.room_status}
-                onChange={handleChange}
-              >
-                <option value="available">Available</option>
-                <option value="full">Full</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
             </div>
           </div>
         </div>
