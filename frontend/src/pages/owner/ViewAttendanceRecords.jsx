@@ -56,23 +56,28 @@ function ViewAttendanceRecords() {
             </thead>
 
             <tbody>
-              {records.map((record) => (
-                <tr key={record.attendance_id}>
-                  <td>{record.attendance_id}</td>
-                  <td>{record.student_id}</td>
-                  <td>{record.attendance_date}</td>
+              {records.map((record) => {
+                const status =
+                  record.status || record.attendance_status || "Unknown";
 
-                  <td>
-                    <span
-                      className={`status-badge status-${record.status.toLowerCase()}`}
-                    >
-                      {record.status}
-                    </span>
-                  </td>
+                return (
+                  <tr key={record.attendance_id}>
+                    <td>{record.attendance_id}</td>
+                    <td>{record.student_id}</td>
+                    <td>{record.attendance_date || record.date || "-"}</td>
 
-                  <td>{record.remarks || "-"}</td>
-                </tr>
-              ))}
+                    <td>
+                      <span
+                        className={`status-badge status-${status.toLowerCase()}`}
+                      >
+                        {status}
+                      </span>
+                    </td>
+
+                    <td>{record.remarks || "-"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
