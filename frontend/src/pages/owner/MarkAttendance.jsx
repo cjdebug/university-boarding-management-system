@@ -10,7 +10,7 @@ function MarkAttendance() {
     student_id: "",
     attendance_date: today,
     attendance_status: "",
-    remarks: "",
+    note: "",
   });
 
   const [message, setMessage] = useState("");
@@ -51,7 +51,7 @@ function MarkAttendance() {
         student_id: Number(formData.student_id),
         attendance_date: formData.attendance_date,
         attendance_status: formData.attendance_status,
-        remarks: formData.remarks || null,
+        note: formData.note || null,
       };
 
       const createdAttendance = await apiRequest("/attendance", {
@@ -67,7 +67,7 @@ function MarkAttendance() {
         student_id: "",
         attendance_date: today,
         attendance_status: "",
-        remarks: "",
+        note: "",
       });
     } catch (err) {
       let errorMessage = "Failed to record attendance.";
@@ -148,8 +148,8 @@ function MarkAttendance() {
               <label>Remarks</label>
 
               <textarea
-                name="remarks"
-                value={formData.remarks}
+                name="note"
+                value={formData.note}
                 onChange={handleChange}
                 placeholder="Optional attendance note"
               />
