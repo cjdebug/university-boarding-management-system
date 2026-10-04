@@ -7,6 +7,7 @@ from app.core.security import (
 )
 from app.database.session import get_db
 from app.models.user import User
+from app.models.student import Student
 from app.schemas.auth import (
     CurrentUserResponse,
     LoginRequest,
@@ -71,6 +72,26 @@ def login(
     "/me",
     response_model=CurrentUserResponse,
 )
+def get_me(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    student = None
+
+    if current_user.role == "student":
+        student = db.query(Student).filter(
+            Student.user_id == current_user.user_id
+        ).first()
+
+    return {
+        "user_id": current_user.user_id,
+        "username": current_user.username,
+        "role": current_user.role,
+        "account_status": current_user.account_status,
+        "full_name": student.full_name if student else None,
+        "registration_no": student.registration_no if student else None,
+    }
+
 def get_me(
     current_user: User = Depends(get_current_user),
 ):
