@@ -1,15 +1,37 @@
 import { Bell, Search, UserRound } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { getUnreadNotificationCount } from "../../services/api";
 
 function TopNavbar({ userType, userName, userId }) {
   const location = useLocation();
 
   const isOwner = userType === "owner";
 
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      try {
+        const data = await getUnreadNotificationCount();
+
+        setUnreadCount(data.unread_count);
+      } catch (error) {
+        console.error("Failed to load notification count:", error);
+
+        setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+  }, [location.pathname]);
+
   const getPageTitle = () => {
     const path = location.pathname;
 
     // STUDENT PAGES
+
     if (userType === "student") {
       switch (path) {
         case "/student/dashboard":
@@ -42,6 +64,7 @@ function TopNavbar({ userType, userName, userId }) {
     }
 
     // OWNER PAGES
+
     if (userType === "owner") {
       switch (path) {
         case "/owner/dashboard":
@@ -101,7 +124,9 @@ function TopNavbar({ userType, userName, userId }) {
         >
           <Bell size={25} strokeWidth={1.8} />
 
-          <span className="notification-badge">3</span>
+          {unreadCount > 0 && (
+            <span className="notification-badge">{unreadCount}</span>
+          )}
         </button>
 
         <div className="navbar-profile">
@@ -113,11 +138,13 @@ function TopNavbar({ userType, userName, userId }) {
             {isOwner ? (
               <>
                 <strong>Boarding Owner</strong>
+
                 <span>Administrator</span>
               </>
             ) : (
               <>
                 <strong>{userName}</strong>
+
                 <span>{userId}</span>
               </>
             )}
