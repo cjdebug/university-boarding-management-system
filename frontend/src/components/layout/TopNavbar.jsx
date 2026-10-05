@@ -1,7 +1,7 @@
 import { Bell, Search, UserRound } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import NotificationPanel from "../common/NotificationPanel";
 import { getUnreadNotificationCount } from "../../services/api";
 
 function TopNavbar({ userType, userName, userId }) {
@@ -10,6 +10,17 @@ function TopNavbar({ userType, userName, userId }) {
   const isOwner = userType === "owner";
 
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const loadUnreadCount = async () => {
+    try {
+      const data = await getUnreadNotificationCount();
+      setUnreadCount(data.unread_count);
+    } catch (error) {
+      console.error("Failed to load notification count:", error);
+      setUnreadCount(0);
+    }
+  };
 
   useEffect(() => {
     const loadUnreadCount = async () => {
@@ -117,17 +128,24 @@ function TopNavbar({ userType, userName, userId }) {
           </div>
         )}
 
-        <button
-          className="notification-button"
-          type="button"
-          aria-label="Notifications"
-        >
-          <Bell size={25} strokeWidth={1.8} />
+        <div className="notification-wrapper">
+          <button
+            className="notification-button"
+            type="button"
+            aria-label="Notifications"
+            onClick={() => setShowNotifications((current) => !current)}
+          >
+            <Bell size={25} strokeWidth={1.8} />
 
-          {unreadCount > 0 && (
-            <span className="notification-badge">{unreadCount}</span>
+            {unreadCount > 0 && (
+              <span className="notification-badge">{unreadCount}</span>
+            )}
+          </button>
+
+          {showNotifications && (
+            <NotificationPanel onUnreadCountChange={loadUnreadCount} />
           )}
-        </button>
+        </div>
 
         <div className="navbar-profile">
           <div className="navbar-profile-avatar">
