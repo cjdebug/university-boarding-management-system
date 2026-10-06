@@ -45,6 +45,7 @@ import MyFeedback from "../pages/student/MyFeedback";
 import ViewFeedback from "../pages/owner/ViewFeedback";
 import StudentFeedbackManagement from "../pages/student/StudentFeedbackManagement";
 import CommunicationTurnoverManagement from "../pages/owner/CommunicationTurnoverManagement";
+import FeePaymentReport from "../pages/owner/reports/FeePaymentReport";
 
 function AppRoutes() {
   return (
@@ -114,6 +115,8 @@ function AppRoutes() {
           path="communication-turnover"
           element={<CommunicationTurnoverManagement />}
         />
+
+        <Route path="reports/fee-payments" element={<FeePaymentReport />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
