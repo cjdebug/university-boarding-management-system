@@ -5,6 +5,7 @@ from app.database.session import get_db
 from app.models.leave_request import LeaveRequest
 from app.models.student import Student
 from app.models.user import User
+from app.models.notification import Notification
 from app.schemas.leave_request import (
     LeaveRequestCreate,
     LeaveRequestResponse,
@@ -55,6 +56,23 @@ def create_leave_request(
     )
 
     db.add(new_leave_request)
+
+    owner = db.query(User).filter(
+        User.role == "owner",
+        User.account_status == "active",
+    ).first()
+
+    if owner:
+        notification = Notification(
+            user_id=owner.user_id,
+            title="New Leave Request",
+            message="A student has submitted a new leave request.",
+            notification_type="leave_request",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_leave_request)
 
