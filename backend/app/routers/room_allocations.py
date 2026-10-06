@@ -1,16 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
+
 from app.models.room_allocation import RoomAllocation
 from app.models.room import Room
 from app.models.student import Student
+from app.models.user import User
+from app.models.notification import Notification
+
 from app.schemas.room_allocation import (
     RoomAllocationCreate,
     RoomAllocationResponse,
 )
+
 from app.services.auth_service import get_current_user
-from app.models.user import User
 
 
 router = APIRouter(
@@ -19,6 +24,7 @@ router = APIRouter(
 )
 
 
+# STUDENT - view own room allocation
 @router.get(
     "/my",
     response_model=RoomAllocationResponse,
@@ -51,6 +57,7 @@ def get_my_room_allocation(
     return allocation
 
 
+# OWNER - create room allocation
 @router.post(
     "",
     response_model=RoomAllocationResponse,
@@ -114,11 +121,30 @@ def create_room_allocation(
     if room.occupied_beds >= room.capacity:
         room.room_status = "full"
 
+    student_user = db.query(User).filter(
+        User.user_id == student.user_id,
+        User.role == "student",
+        User.account_status == "active",
+    ).first()
+
+    if student_user:
+        notification = Notification(
+            user_id=student_user.user_id,
+            title="Room Allocation Updated",
+            message="A room has been allocated to you.",
+            notification_type="room_allocation",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_allocation)
 
     return new_allocation
 
+
+# OWNER - view all room allocations
 @router.get(
     "",
     response_model=list[RoomAllocationResponse],

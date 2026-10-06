@@ -1,11 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
+
 from app.models.fee_record import FeeRecord
+from app.models.notification import Notification
 from app.models.student import Student
 from app.models.user import User
+
 from app.schemas.fee_record import FeeRecordCreate, FeeRecordResponse
+
 from app.services.auth_service import get_current_user
 
 
@@ -15,6 +20,7 @@ router = APIRouter(
 )
 
 
+# OWNER - create fee record
 @router.post(
     "",
     response_model=FeeRecordResponse,
@@ -44,6 +50,24 @@ def create_fee_record(
     )
 
     db.add(new_fee_record)
+
+    student_user = db.query(User).filter(
+        User.user_id == student.user_id,
+        User.role == "student",
+        User.account_status == "active",
+    ).first()
+
+    if student_user:
+        notification = Notification(
+            user_id=student_user.user_id,
+            title="New Fee Record",
+            message="A new boarding fee record has been added to your account.",
+            notification_type="fee_record",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_fee_record)
 
