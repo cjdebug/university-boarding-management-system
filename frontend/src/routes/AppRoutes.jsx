@@ -49,6 +49,7 @@ import FeePaymentReport from "../pages/owner/reports/FeePaymentReport";
 import AttendanceReport from "../pages/owner/reports/AttendanceReport";
 import MaintenanceReport from "../pages/owner/reports/MaintenanceReport";
 import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTurnoverReport";
+import Reports from "../pages/owner/Reports";
 
 function AppRoutes() {
   return (
@@ -118,6 +119,8 @@ function AppRoutes() {
           path="communication-turnover"
           element={<CommunicationTurnoverManagement />}
         />
+
+        <Route path="reports" element={<Reports />} />
 
         <Route path="reports/fee-payments" element={<FeePaymentReport />} />
 
