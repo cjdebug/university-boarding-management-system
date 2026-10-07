@@ -48,6 +48,7 @@ import CommunicationTurnoverManagement from "../pages/owner/CommunicationTurnove
 import FeePaymentReport from "../pages/owner/reports/FeePaymentReport";
 import AttendanceReport from "../pages/owner/reports/AttendanceReport";
 import MaintenanceReport from "../pages/owner/reports/MaintenanceReport";
+import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTurnoverReport";
 
 function AppRoutes() {
   return (
@@ -123,6 +124,11 @@ function AppRoutes() {
         <Route path="reports/attendance" element={<AttendanceReport />} />
 
         <Route path="reports/maintenance" element={<MaintenanceReport />} />
+
+        <Route
+          path="reports/communication-turnover"
+          element={<CommunicationTurnoverReport />}
+        />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>

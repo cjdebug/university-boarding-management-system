@@ -756,3 +756,7 @@
 .report-subsection-header {
     margin-top: 35px;
 }
+
+.report-section>.report-subsection+.report-subsection {
+    margin-top: 30px;
+}
