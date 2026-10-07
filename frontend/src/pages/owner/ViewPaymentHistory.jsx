@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewPaymentHistory() {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,6 +31,28 @@ function ViewPaymentHistory() {
     );
   }
 
+  const handleDelete = async (paymentId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this payment?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/payments/${paymentId}`, {
+        method: "DELETE",
+      });
+
+      setPayments((currentPayments) =>
+        currentPayments.filter((payment) => payment.payment_id !== paymentId),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -54,6 +78,7 @@ function ViewPaymentHistory() {
                 <th>Method</th>
                 <th>Reference No.</th>
                 <th>Note</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -73,6 +98,27 @@ function ViewPaymentHistory() {
 
                   <td>{payment.reference_no || "-"}</td>
                   <td>{payment.note || "-"}</td>
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-edit"
+                        onClick={() =>
+                          navigate(`/owner/payments/${payment.payment_id}/edit`)
+                        }
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-delete"
+                        onClick={() => handleDelete(payment.payment_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

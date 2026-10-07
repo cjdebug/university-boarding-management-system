@@ -50,6 +50,8 @@ import AttendanceReport from "../pages/owner/reports/AttendanceReport";
 import MaintenanceReport from "../pages/owner/reports/MaintenanceReport";
 import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTurnoverReport";
 import Reports from "../pages/owner/Reports";
+import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
+import UpdatePayment from "../pages/owner/UpdatePayment";
 
 function AppRoutes() {
   return (
@@ -91,8 +93,10 @@ function AppRoutes() {
 
         <Route path="payments/add" element={<RecordPayment />} />
 
-        <Route path="payments" element={<ViewPaymentHistory />} />
+        <Route path="payments/:payment_id/edit" element={<UpdatePayment />} />
 
+        <Route path="payments" element={<ViewPaymentHistory />} />
+        
         <Route path="attendance" element={<ViewAttendanceRecords />} />
 
         <Route
@@ -131,6 +135,11 @@ function AppRoutes() {
         <Route
           path="reports/communication-turnover"
           element={<CommunicationTurnoverReport />}
+        />
+
+        <Route
+          path="fee-records/:fee_record_id/edit"
+          element={<UpdateFeeRecord />}
         />
       </Route>
 

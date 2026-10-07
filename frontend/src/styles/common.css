@@ -760,3 +760,39 @@
 .report-section>.report-subsection+.report-subsection {
     margin-top: 30px;
 }
+
+/* Table action buttons */
+.table-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table-action-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 70px;
+}
+
+.table-action-edit {
+    background: #166534;
+    color: white;
+}
+
+.table-action-edit:hover {
+    background: #14532d;
+}
+
+.table-action-delete {
+    background: #dc2626;
+    color: white;
+}
+
+.table-action-delete:hover {
+    background: #b91c1c;
+}
