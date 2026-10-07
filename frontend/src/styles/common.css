@@ -752,3 +752,7 @@
         page-break-inside: avoid !important;
     }
 }
+
+.report-subsection-header {
+    margin-top: 35px;
+}

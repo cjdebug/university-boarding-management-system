@@ -46,6 +46,7 @@ import ViewFeedback from "../pages/owner/ViewFeedback";
 import StudentFeedbackManagement from "../pages/student/StudentFeedbackManagement";
 import CommunicationTurnoverManagement from "../pages/owner/CommunicationTurnoverManagement";
 import FeePaymentReport from "../pages/owner/reports/FeePaymentReport";
+import AttendanceReport from "../pages/owner/reports/AttendanceReport";
 
 function AppRoutes() {
   return (
@@ -117,6 +118,8 @@ function AppRoutes() {
         />
 
         <Route path="reports/fee-payments" element={<FeePaymentReport />} />
+
+        <Route path="reports/attendance" element={<AttendanceReport />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
