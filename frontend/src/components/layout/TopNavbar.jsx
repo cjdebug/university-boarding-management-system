@@ -99,6 +99,18 @@ function TopNavbar({ userType, userName, userId }) {
         case "/owner/reports":
           return "Reports";
 
+        case "/owner/reports/fee-payments":
+          return "Fee & Payment Report";
+
+        case "/owner/reports/attendance":
+          return "Attendance Management Report";
+
+        case "/owner/reports/maintenance":
+          return "Maintenance Request Report";
+
+        case "/owner/reports/communication-turnover":
+          return "Communication & Turnover Report";
+
         default:
           return "Management Portal";
       }

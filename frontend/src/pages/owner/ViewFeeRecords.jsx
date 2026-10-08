@@ -4,7 +4,9 @@ import { apiRequest } from "../../services/api";
 
 function ViewFeeRecords() {
   const navigate = useNavigate();
+
   const [feeRecords, setFeeRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,14 +24,6 @@ function ViewFeeRecords() {
 
     fetchFeeRecords();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="page-container">
-        <div className="loading-text">Loading fee records...</div>
-      </div>
-    );
-  }
 
   const handleDelete = async (feeRecordId) => {
     const confirmed = window.confirm(
@@ -53,6 +47,24 @@ function ViewFeeRecords() {
     }
   };
 
+  const filteredFeeRecords = feeRecords.filter((fee) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      String(fee.student_id).includes(search) ||
+      fee.fee_type.toLowerCase().includes(search) ||
+      fee.fee_status.toLowerCase().includes(search)
+    );
+  });
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading fee records...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -62,11 +74,26 @@ function ViewFeeRecords() {
 
       {error && <div className="message-error">{error}</div>}
 
+      <div className="form-group">
+        <label>Search Fee Records</label>
+
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by student ID, fee type, or status"
+        />
+      </div>
+
       {!error && feeRecords.length === 0 && (
         <div className="empty-state">No fee records found.</div>
       )}
 
-      {feeRecords.length > 0 && (
+      {feeRecords.length > 0 && filteredFeeRecords.length === 0 && (
+        <div className="empty-state">No fee records match your search.</div>
+      )}
+
+      {filteredFeeRecords.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
@@ -83,12 +110,16 @@ function ViewFeeRecords() {
             </thead>
 
             <tbody>
-              {feeRecords.map((fee) => (
+              {filteredFeeRecords.map((fee) => (
                 <tr key={fee.fee_record_id}>
                   <td>{fee.fee_record_id}</td>
+
                   <td>{fee.student_id}</td>
+
                   <td>{fee.fee_type}</td>
+
                   <td>Rs. {fee.amount}</td>
+
                   <td>{fee.due_date}</td>
 
                   <td>
@@ -98,6 +129,7 @@ function ViewFeeRecords() {
                   </td>
 
                   <td>{fee.description || "-"}</td>
+
                   <td>
                     <div className="table-actions">
                       <button

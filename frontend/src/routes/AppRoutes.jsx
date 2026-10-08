@@ -52,6 +52,7 @@ import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTur
 import Reports from "../pages/owner/Reports";
 import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
 import UpdatePayment from "../pages/owner/UpdatePayment";
+import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
 
 function AppRoutes() {
   return (
@@ -96,7 +97,7 @@ function AppRoutes() {
         <Route path="payments/:payment_id/edit" element={<UpdatePayment />} />
 
         <Route path="payments" element={<ViewPaymentHistory />} />
-        
+
         <Route path="attendance" element={<ViewAttendanceRecords />} />
 
         <Route
@@ -141,6 +142,8 @@ function AppRoutes() {
           path="fee-records/:fee_record_id/edit"
           element={<UpdateFeeRecord />}
         />
+
+        <Route path="fee-records/overdue" element={<OverdueFeeRecords />} />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>
