@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewFeeRecords() {
+  const navigate = useNavigate();
   const [feeRecords, setFeeRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,6 +31,28 @@ function ViewFeeRecords() {
     );
   }
 
+  const handleDelete = async (feeRecordId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this fee record?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/fee-records/${feeRecordId}`, {
+        method: "DELETE",
+      });
+
+      setFeeRecords((currentRecords) =>
+        currentRecords.filter((fee) => fee.fee_record_id !== feeRecordId),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -54,6 +78,7 @@ function ViewFeeRecords() {
                 <th>Due Date</th>
                 <th>Status</th>
                 <th>Description</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -73,6 +98,29 @@ function ViewFeeRecords() {
                   </td>
 
                   <td>{fee.description || "-"}</td>
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-edit"
+                        onClick={() =>
+                          navigate(
+                            `/owner/fee-records/${fee.fee_record_id}/edit`,
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-delete"
+                        onClick={() => handleDelete(fee.fee_record_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -61,6 +61,9 @@ export const getCurrentUser = async () => {
   return apiRequest('/auth/me')
 }
 
+export const getUnreadNotificationCount = async () => {
+  return apiRequest('/notifications/unread-count')
+}
 
 export const logoutUser = () => {
   localStorage.removeItem('access_token')

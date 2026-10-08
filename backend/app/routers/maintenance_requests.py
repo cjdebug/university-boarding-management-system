@@ -1,17 +1,22 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
+
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
+
 from app.models.maintenance_request import MaintenanceRequest
 from app.models.room_allocation import RoomAllocation
 from app.models.student import Student
 from app.models.user import User
+from app.models.notification import Notification
+
 from app.schemas.maintenance_request import (
     MaintenanceRequestCreate,
     MaintenanceRequestResponse,
 )
+
 from app.services.auth_service import get_current_user
 
 
@@ -63,6 +68,23 @@ def create_maintenance_request(
     )
 
     db.add(new_request)
+
+    owner = db.query(User).filter(
+        User.role == "owner",
+        User.account_status == "active",
+    ).first()
+
+    if owner:
+        notification = Notification(
+            user_id=owner.user_id,
+            title="New Maintenance Request",
+            message="A student has submitted a new maintenance request.",
+            notification_type="maintenance_request",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_request)
 

@@ -1,16 +1,21 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
+
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
+
 from app.models.feedback import Feedback
 from app.models.student import Student
 from app.models.user import User
+from app.models.notification import Notification
+
 from app.schemas.feedback import (
     FeedbackCreate,
     FeedbackResponse,
 )
+
 from app.services.auth_service import get_current_user
 
 
@@ -50,6 +55,23 @@ def create_feedback(
     )
 
     db.add(new_feedback)
+
+    owner = db.query(User).filter(
+        User.role == "owner",
+        User.account_status == "active",
+    ).first()
+
+    if owner:
+        notification = Notification(
+            user_id=owner.user_id,
+            title="New Student Feedback",
+            message="A student has submitted new feedback.",
+            notification_type="feedback",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_feedback)
 

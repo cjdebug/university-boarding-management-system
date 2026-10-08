@@ -7,6 +7,7 @@ from app.database.session import get_db
 from app.models.complaint import Complaint
 from app.models.student import Student
 from app.models.user import User
+from app.models.notification import Notification
 from app.schemas.complaint import (
     ComplaintCreate,
     ComplaintResponse,
@@ -50,6 +51,23 @@ def create_complaint(
     )
 
     db.add(new_complaint)
+
+    owner = db.query(User).filter(
+        User.role == "owner",
+        User.account_status == "active",
+    ).first()
+
+    if owner:
+        notification = Notification(
+            user_id=owner.user_id,
+            title="New Complaint",
+            message="A student has submitted a new complaint.",
+            notification_type="complaint",
+            is_read=False,
+        )
+
+        db.add(notification)
+
     db.commit()
     db.refresh(new_complaint)
 

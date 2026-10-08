@@ -14,6 +14,13 @@ from app.routers.payments import router as payments_router
 from app.routers.leave_requests import router as leave_requests_router
 from app.routers.complaints import router as complaints_router
 from app.routers.feedback import router as feedback_router
+from app.routers.notifications import router as notifications_router
+from app.routers.fee_payment_reports import router as fee_payment_reports_router
+from app.routers.attendance_reports import router as attendance_reports_router
+from app.routers.maintenance_reports import router as maintenance_reports_router
+from app.routers.communication_turnover_reports import (
+    router as communication_turnover_reports_router,
+)
 
 from app.core.config import settings
 from app.database.connection import engine
@@ -48,6 +55,11 @@ app.include_router(payments_router)
 app.include_router(leave_requests_router)
 app.include_router(complaints_router)
 app.include_router(feedback_router)
+app.include_router(notifications_router)
+app.include_router(fee_payment_reports_router)
+app.include_router(attendance_reports_router)
+app.include_router(maintenance_reports_router)
+app.include_router(communication_turnover_reports_router)
 
 @app.get("/")
 def root():

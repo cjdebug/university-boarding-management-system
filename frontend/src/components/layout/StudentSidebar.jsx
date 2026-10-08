@@ -12,7 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 
-function StudentSidebar() {
+function StudentSidebar({ studentName, studentId }) {
   const navigate = useNavigate();
 
   const menuItems = [
@@ -61,7 +61,6 @@ function StudentSidebar() {
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user_role");
-
     navigate("/login");
   };
 
@@ -115,8 +114,8 @@ function StudentSidebar() {
           </div>
 
           <div className="sidebar-profile-text">
-            <strong>Student Resident</strong>
-            <span>Boarding Student</span>
+            <strong>{studentName || "Student"}</strong>
+            <span>{studentId || "Loading..."}</span>
           </div>
         </div>
       </div>

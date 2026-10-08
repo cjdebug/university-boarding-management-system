@@ -18,3 +18,5 @@ class CurrentUserResponse(BaseModel):
     username: str
     role: str
     account_status: str
+    full_name: str | None = None
+    registration_no: str | None = None

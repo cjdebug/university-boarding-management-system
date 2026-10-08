@@ -45,6 +45,13 @@ import MyFeedback from "../pages/student/MyFeedback";
 import ViewFeedback from "../pages/owner/ViewFeedback";
 import StudentFeedbackManagement from "../pages/student/StudentFeedbackManagement";
 import CommunicationTurnoverManagement from "../pages/owner/CommunicationTurnoverManagement";
+import FeePaymentReport from "../pages/owner/reports/FeePaymentReport";
+import AttendanceReport from "../pages/owner/reports/AttendanceReport";
+import MaintenanceReport from "../pages/owner/reports/MaintenanceReport";
+import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTurnoverReport";
+import Reports from "../pages/owner/Reports";
+import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
+import UpdatePayment from "../pages/owner/UpdatePayment";
 
 function AppRoutes() {
   return (
@@ -86,8 +93,10 @@ function AppRoutes() {
 
         <Route path="payments/add" element={<RecordPayment />} />
 
-        <Route path="payments" element={<ViewPaymentHistory />} />
+        <Route path="payments/:payment_id/edit" element={<UpdatePayment />} />
 
+        <Route path="payments" element={<ViewPaymentHistory />} />
+        
         <Route path="attendance" element={<ViewAttendanceRecords />} />
 
         <Route
@@ -113,6 +122,24 @@ function AppRoutes() {
         <Route
           path="communication-turnover"
           element={<CommunicationTurnoverManagement />}
+        />
+
+        <Route path="reports" element={<Reports />} />
+
+        <Route path="reports/fee-payments" element={<FeePaymentReport />} />
+
+        <Route path="reports/attendance" element={<AttendanceReport />} />
+
+        <Route path="reports/maintenance" element={<MaintenanceReport />} />
+
+        <Route
+          path="reports/communication-turnover"
+          element={<CommunicationTurnoverReport />}
+        />
+
+        <Route
+          path="fee-records/:fee_record_id/edit"
+          element={<UpdateFeeRecord />}
         />
       </Route>
 
