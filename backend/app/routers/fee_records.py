@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from sqlalchemy.orm import Session
@@ -87,6 +89,23 @@ def get_fee_records(
 
     return fee_records
 
+
+# OWNER - view overdue fee records
+@router.get(
+    "/overdue",
+    response_model=list[FeeRecordResponse],
+)
+def get_overdue_fee_records(
+    db: Session = Depends(get_db),
+):
+    overdue_records = db.query(FeeRecord).filter(
+        FeeRecord.due_date < date.today(),
+        FeeRecord.fee_status != "paid",
+    ).all()
+
+    return overdue_records
+
+
 # OWNER - update fee record
 @router.put(
     "/{fee_record_id}",
@@ -128,6 +147,7 @@ def update_fee_record(
 
     return fee_record
 
+
 # OWNER - delete fee record
 @router.delete(
     "/{fee_record_id}",
@@ -162,6 +182,7 @@ def delete_fee_record(
     return {
         "message": "Fee record deleted successfully",
     }
+
 
 # STUDENT - view only their own fee records
 @router.get(
