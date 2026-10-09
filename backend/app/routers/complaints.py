@@ -177,3 +177,29 @@ def delete_complaint(
     return {
         "message": "Complaint deleted successfully",
     }
+
+# OWNER - complaint category statistics
+@router.get(
+    "/statistics",
+)
+def get_complaint_statistics(
+    db: Session = Depends(get_db),
+):
+    complaints = db.query(Complaint).all()
+
+    total_complaints = len(complaints)
+
+    category_counts = {}
+
+    for complaint in complaints:
+        category = complaint.complaint_type.strip().title()
+
+        if category in category_counts:
+            category_counts[category] += 1
+        else:
+            category_counts[category] = 1
+
+    return {
+        "total_complaints": total_complaints,
+        "categories": category_counts,
+    }

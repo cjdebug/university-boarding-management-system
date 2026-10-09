@@ -67,6 +67,14 @@ function ViewComplaints() {
       <div className="page-header">
         <h1>Student Complaints</h1>
         <p>Review complaints submitted by student residents.</p>
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => navigate("/owner/complaints/statistics")}
+        >
+          View Category Statistics
+        </button>
       </div>
 
       {message && <div className="message-success">{message}</div>}

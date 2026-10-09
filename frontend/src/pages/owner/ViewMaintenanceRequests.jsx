@@ -67,6 +67,14 @@ function ViewMaintenanceRequests() {
       <div className="page-header">
         <h1>Maintenance Requests</h1>
         <p>Review maintenance issues reported by student residents.</p>
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => navigate("/owner/maintenance-requests/room-history")}
+        >
+          View Room Maintenance History
+        </button>
       </div>
 
       {message && <div className="message-success">{message}</div>}
