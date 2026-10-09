@@ -53,6 +53,8 @@ import Reports from "../pages/owner/Reports";
 import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
 import UpdatePayment from "../pages/owner/UpdatePayment";
 import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
+import UpdateAttendance from "../pages/owner/UpdateAttendance";
+import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 
 function AppRoutes() {
   return (
@@ -108,6 +110,11 @@ function AppRoutes() {
         <Route path="leave-requests" element={<ViewLeaveRequests />} />
 
         <Route
+          path="leave-requests/:leave_request_id/edit"
+          element={<UpdateLeaveRequest />}
+        />
+
+        <Route
           path="maintenance-requests"
           element={<ViewMaintenanceRequests />}
         />
@@ -144,6 +151,11 @@ function AppRoutes() {
         />
 
         <Route path="fee-records/overdue" element={<OverdueFeeRecords />} />
+
+        <Route
+          path="attendance/:attendance_id/edit"
+          element={<UpdateAttendance />}
+        />
       </Route>
 
       <Route path="/student" element={<StudentLayout />}>

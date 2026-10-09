@@ -8,6 +8,7 @@ from app.models.user import User
 from app.models.notification import Notification
 from app.schemas.leave_request import (
     LeaveRequestCreate,
+    LeaveRequestUpdate,
     LeaveRequestResponse,
 )
 from app.services.auth_service import get_current_user
@@ -116,3 +117,75 @@ def get_my_leave_requests(
     ).all()
 
     return leave_requests
+
+# OWNER - delete leave request
+@router.delete(
+    "/{leave_request_id}",
+)
+def delete_leave_request(
+    leave_request_id: int,
+    db: Session = Depends(get_db),
+):
+    leave_request = (
+        db.query(LeaveRequest)
+        .filter(
+            LeaveRequest.leave_request_id == leave_request_id
+        )
+        .first()
+    )
+
+    if not leave_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave request not found",
+        )
+
+    db.delete(leave_request)
+    db.commit()
+
+    return {
+        "message": "Leave request deleted successfully"
+    }
+
+# OWNER - update leave request
+@router.put(
+    "/{leave_request_id}",
+    response_model=LeaveRequestResponse,
+)
+def update_leave_request(
+    leave_request_id: int,
+    leave_data: LeaveRequestUpdate,
+    db: Session = Depends(get_db),
+):
+    leave_request = db.query(LeaveRequest).filter(
+        LeaveRequest.leave_request_id == leave_request_id
+    ).first()
+
+    if not leave_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave request not found",
+        )
+
+    if leave_data.end_date < leave_data.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End date cannot be before start date",
+        )
+
+    if leave_data.request_status not in ["pending", "approved", "rejected"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid leave request status",
+        )
+
+    leave_request.leave_type = leave_data.leave_type
+    leave_request.start_date = leave_data.start_date
+    leave_request.end_date = leave_data.end_date
+    leave_request.reason = leave_data.reason
+    leave_request.request_status = leave_data.request_status
+
+    db.commit()
+    db.refresh(leave_request)
+
+    return leave_request
