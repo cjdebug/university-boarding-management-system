@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewAttendanceRecords() {
+  const navigate = useNavigate();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,6 +22,30 @@ function ViewAttendanceRecords() {
 
     fetchAttendance();
   }, []);
+
+  const handleDelete = async (attendanceId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this attendance record?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/attendance/${attendanceId}`, {
+        method: "DELETE",
+      });
+
+      setRecords((currentRecords) =>
+        currentRecords.filter(
+          (record) => record.attendance_id !== attendanceId,
+        ),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   if (loading) {
     return (
@@ -52,6 +78,7 @@ function ViewAttendanceRecords() {
                 <th>Date</th>
                 <th>Status</th>
                 <th>Remarks</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -63,7 +90,9 @@ function ViewAttendanceRecords() {
                 return (
                   <tr key={record.attendance_id}>
                     <td>{record.attendance_id}</td>
+
                     <td>{record.student_id}</td>
+
                     <td>{record.attendance_date || record.date || "-"}</td>
 
                     <td>
@@ -74,7 +103,31 @@ function ViewAttendanceRecords() {
                       </span>
                     </td>
 
-                    <td>{record.remarks || "-"}</td>
+                    <td>{record.note || "-"}</td>
+
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-edit"
+                          onClick={() =>
+                            navigate(
+                              `/owner/attendance/${record.attendance_id}/edit`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-delete"
+                          onClick={() => handleDelete(record.attendance_id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
