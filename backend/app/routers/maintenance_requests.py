@@ -190,3 +190,21 @@ def get_my_maintenance_requests(
     ).all()
 
     return requests
+
+# OWNER - view maintenance history for a specific room
+@router.get(
+    "/room/{room_id}/history",
+    response_model=list[MaintenanceRequestResponse],
+)
+def get_room_maintenance_history(
+    room_id: int,
+    db: Session = Depends(get_db),
+):
+    requests = (
+        db.query(MaintenanceRequest)
+        .filter(MaintenanceRequest.room_id == room_id)
+        .order_by(MaintenanceRequest.request_date.desc())
+        .all()
+    )
+
+    return requests

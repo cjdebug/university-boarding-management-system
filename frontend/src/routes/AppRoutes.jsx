@@ -58,6 +58,8 @@ import UpdateAttendance from "../pages/owner/UpdateAttendance";
 import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 import UpdateMaintenanceRequest from "../pages/owner/UpdateMaintenanceRequest";
 import UpdateComplaint from "../pages/owner/UpdateComplaint";
+import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
+import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
 
 function AppRoutes() {
   return (
@@ -170,6 +172,16 @@ function AppRoutes() {
         <Route
           path="attendance/:attendance_id/edit"
           element={<UpdateAttendance />}
+        />
+
+        <Route
+          path="/owner/complaints/statistics"
+          element={<ComplaintStatistics />}
+        />
+
+        <Route
+          path="/owner/maintenance-requests/room-history"
+          element={<RoomMaintenanceHistory />}
         />
       </Route>
 
