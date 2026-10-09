@@ -58,7 +58,12 @@ function MyMaintenanceRequests() {
 
             <tbody>
               {requests.map((request) => {
-                const status = request.status || "Pending";
+                const status =
+                  request.status || request.request_status || "Pending";
+
+                const displayStatus = status
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
                 return (
                   <tr key={request.maintenance_request_id}>
@@ -72,7 +77,7 @@ function MyMaintenanceRequests() {
                       <span
                         className={`status-badge status-${status.toLowerCase()}`}
                       >
-                        {status}
+                        {displayStatus}
                       </span>
                     </td>
                   </tr>

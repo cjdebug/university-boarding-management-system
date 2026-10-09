@@ -14,6 +14,7 @@ from app.models.notification import Notification
 
 from app.schemas.maintenance_request import (
     MaintenanceRequestCreate,
+    MaintenanceRequestUpdate,
     MaintenanceRequestResponse,
 )
 
@@ -103,6 +104,67 @@ def get_maintenance_requests(
 
     return requests
 
+# OWNER - update maintenance request
+@router.put(
+    "/{maintenance_request_id}",
+    response_model=MaintenanceRequestResponse,
+)
+def update_maintenance_request(
+    maintenance_request_id: int,
+    request_data: MaintenanceRequestUpdate,
+    db: Session = Depends(get_db),
+):
+    maintenance_request = db.query(MaintenanceRequest).filter(
+        MaintenanceRequest.maintenance_request_id == maintenance_request_id
+    ).first()
+
+    if not maintenance_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Maintenance request not found",
+        )
+    
+    allowed_statuses = ["pending", "in_progress", "completed"]
+
+    if request_data.request_status not in allowed_statuses:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid maintenance request status",
+    )
+
+    maintenance_request.issue_type = request_data.issue_type
+    maintenance_request.description = request_data.description
+    maintenance_request.request_status = request_data.request_status
+
+    db.commit()
+    db.refresh(maintenance_request)
+
+    return maintenance_request
+
+# OWNER - delete maintenance request
+@router.delete(
+    "/{maintenance_request_id}",
+)
+def delete_maintenance_request(
+    maintenance_request_id: int,
+    db: Session = Depends(get_db),
+):
+    maintenance_request = db.query(MaintenanceRequest).filter(
+        MaintenanceRequest.maintenance_request_id == maintenance_request_id
+    ).first()
+
+    if not maintenance_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Maintenance request not found",
+        )
+
+    db.delete(maintenance_request)
+    db.commit()
+
+    return {
+        "message": "Maintenance request deleted successfully",
+    }
 
 # STUDENT - read only own maintenance requests
 @router.get(

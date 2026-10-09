@@ -10,6 +10,7 @@ from app.models.user import User
 from app.models.notification import Notification
 from app.schemas.complaint import (
     ComplaintCreate,
+    ComplaintUpdate,
     ComplaintResponse,
 )
 from app.services.auth_service import get_current_user
@@ -111,3 +112,68 @@ def get_my_complaints(
     ).all()
 
     return complaints
+
+# OWNER - update complaint
+@router.put(
+    "/{complaint_id}",
+    response_model=ComplaintResponse,
+)
+def update_complaint(
+    complaint_id: int,
+    complaint_data: ComplaintUpdate,
+    db: Session = Depends(get_db),
+):
+    complaint = db.query(Complaint).filter(
+        Complaint.complaint_id == complaint_id
+    ).first()
+
+    if not complaint:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Complaint not found",
+        )
+
+    if complaint_data.complaint_status not in [
+        "pending",
+        "in_progress",
+        "resolved",
+    ]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid complaint status",
+        )
+
+    complaint.complaint_type = complaint_data.complaint_type
+    complaint.description = complaint_data.description
+    complaint.complaint_status = complaint_data.complaint_status
+
+    db.commit()
+    db.refresh(complaint)
+
+    return complaint
+
+
+# OWNER - delete complaint
+@router.delete(
+    "/{complaint_id}",
+)
+def delete_complaint(
+    complaint_id: int,
+    db: Session = Depends(get_db),
+):
+    complaint = db.query(Complaint).filter(
+        Complaint.complaint_id == complaint_id
+    ).first()
+
+    if not complaint:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Complaint not found",
+        )
+
+    db.delete(complaint)
+    db.commit()
+
+    return {
+        "message": "Complaint deleted successfully",
+    }

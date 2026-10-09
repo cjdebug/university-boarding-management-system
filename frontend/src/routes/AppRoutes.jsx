@@ -56,6 +56,8 @@ import UpdatePayment from "../pages/owner/UpdatePayment";
 import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
 import UpdateAttendance from "../pages/owner/UpdateAttendance";
 import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
+import UpdateMaintenanceRequest from "../pages/owner/UpdateMaintenanceRequest";
+import UpdateComplaint from "../pages/owner/UpdateComplaint";
 
 function AppRoutes() {
   return (
@@ -85,6 +87,11 @@ function AppRoutes() {
         <Route
           path="maintenance-requests/add"
           element={<CreateMaintenanceRequest />}
+        />
+
+        <Route
+          path="/owner/maintenance-requests/:maintenance_request_id/edit"
+          element={<UpdateMaintenanceRequest />}
         />
 
         <Route path="announcements/add" element={<CreateAnnouncement />} />
@@ -125,6 +132,11 @@ function AppRoutes() {
         <Route path="operations" element={<OperationsManagement />} />
 
         <Route path="complaints" element={<ViewComplaints />} />
+
+        <Route
+          path="/owner/complaints/:complaint_id/edit"
+          element={<UpdateComplaint />}
+        />
 
         <Route path="announcements" element={<OwnerViewAnnouncements />} />
 
