@@ -26,6 +26,7 @@ import StudentFeePaymentManagement from "../pages/student/StudentFeePaymentManag
 import ViewAttendanceRecords from "../pages/owner/ViewAttendanceRecords";
 import AttendanceManagement from "../pages/owner/AttendanceManagement";
 import MyAttendance from "../pages/student/MyAttendance";
+import BulkAttendance from "../pages/owner/BulkAttendance";
 import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
 import MyLeaveRequests from "../pages/student/MyLeaveRequests";
 import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
@@ -76,6 +77,8 @@ function AppRoutes() {
         <Route path="fee-records/add" element={<CreateFeeRecord />} />
 
         <Route path="attendance/add" element={<MarkAttendance />} />
+
+        <Route path="attendance/bulk" element={<BulkAttendance />} />
 
         <Route path="room-allocations/add" element={<AllocateRoom />} />
 
