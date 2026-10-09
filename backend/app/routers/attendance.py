@@ -7,6 +7,7 @@ from app.models.student import Student
 from app.models.user import User
 from app.schemas.attendance import (
     AttendanceCreate,
+    BulkAttendanceCreate,
     AttendanceResponse,
 )
 from app.services.auth_service import get_current_user
@@ -51,6 +52,45 @@ def create_attendance(
 
     return new_attendance
 
+# OWNER - mark attendance for multiple students
+@router.post(
+    "/bulk",
+    response_model=list[AttendanceResponse],
+    status_code=status.HTTP_201_CREATED,
+)
+def create_bulk_attendance(
+    bulk_data: BulkAttendanceCreate,
+    db: Session = Depends(get_db),
+):
+    created_records = []
+
+    for record in bulk_data.records:
+        student = db.query(Student).filter(
+            Student.student_id == record.student_id
+        ).first()
+
+        if not student:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Student {record.student_id} not found",
+            )
+
+        new_attendance = Attendance(
+            student_id=record.student_id,
+            attendance_date=bulk_data.attendance_date,
+            attendance_status=record.attendance_status,
+            note=record.note,
+        )
+
+        db.add(new_attendance)
+        created_records.append(new_attendance)
+
+    db.commit()
+
+    for record in created_records:
+        db.refresh(record)
+
+    return created_records
 
 # OWNER - view all attendance records
 @router.get(
