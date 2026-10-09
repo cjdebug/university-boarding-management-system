@@ -60,6 +60,9 @@ function MyComplaints() {
                 const status =
                   complaint.status || complaint.complaint_status || "Pending";
 
+                const displayStatus = status
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (letter) => letter.toUpperCase());
                 return (
                   <tr key={complaint.complaint_id}>
                     <td>{complaint.complaint_id}</td>
@@ -71,7 +74,7 @@ function MyComplaints() {
                       <span
                         className={`status-badge status-${status.toLowerCase()}`}
                       >
-                        {status}
+                        {displayStatus}
                       </span>
                     </td>
                   </tr>

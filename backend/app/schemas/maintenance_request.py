@@ -7,6 +7,10 @@ class MaintenanceRequestCreate(BaseModel):
     issue_type: str
     description: str
 
+class MaintenanceRequestUpdate(BaseModel):
+    issue_type: str
+    description: str
+    request_status: str
 
 class MaintenanceRequestResponse(BaseModel):
     maintenance_request_id: int

@@ -1,10 +1,43 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewComplaints() {
+  const navigate = useNavigate();
+
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleDelete = async (complaintId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this complaint?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage("");
+      setError("");
+
+      await apiRequest(`/complaints/${complaintId}`, {
+        method: "DELETE",
+      });
+
+      setComplaints((currentComplaints) =>
+        currentComplaints.filter(
+          (complaint) => complaint.complaint_id !== complaintId,
+        ),
+      );
+
+      setMessage("Complaint deleted successfully.");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   useEffect(() => {
     const fetchComplaints = async () => {
@@ -36,6 +69,8 @@ function ViewComplaints() {
         <p>Review complaints submitted by student residents.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
+
       {error && <div className="message-error">{error}</div>}
 
       {!error && complaints.length === 0 && (
@@ -53,6 +88,7 @@ function ViewComplaints() {
                 <th>Description</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -61,20 +97,52 @@ function ViewComplaints() {
                 const status =
                   complaint.status || complaint.complaint_status || "Pending";
 
+                const displayStatus = status
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
                 return (
                   <tr key={complaint.complaint_id}>
                     <td>{complaint.complaint_id}</td>
+
                     <td>{complaint.student_id}</td>
+
                     <td>{complaint.complaint_type}</td>
+
                     <td>{complaint.description}</td>
+
                     <td>{complaint.complaint_date || complaint.date || "-"}</td>
 
                     <td>
                       <span
                         className={`status-badge status-${status.toLowerCase()}`}
                       >
-                        {status}
+                        {displayStatus}
                       </span>
+                    </td>
+
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-edit"
+                          onClick={() =>
+                            navigate(
+                              `/owner/complaints/${complaint.complaint_id}/edit`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-delete"
+                          onClick={() => handleDelete(complaint.complaint_id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

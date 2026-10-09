@@ -766,7 +766,8 @@
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .table-action-btn {
@@ -777,6 +778,7 @@
     font-weight: 600;
     cursor: pointer;
     min-width: 70px;
+    white-space: nowrap;
 }
 
 .table-action-edit {
