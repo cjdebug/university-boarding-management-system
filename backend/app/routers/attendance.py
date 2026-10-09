@@ -195,3 +195,67 @@ def get_my_attendance(
     ).all()
 
     return attendance_records
+
+# STUDENT - view own attendance percentage
+@router.get(
+    "/my/percentage",
+)
+def get_my_attendance_percentage(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    attendance_records = db.query(Attendance).filter(
+        Attendance.student_id == student.student_id
+    ).all()
+
+    total_attendance = len(attendance_records)
+
+    if total_attendance == 0:
+        return {
+            "total_attendance": 0,
+            "present": 0,
+            "absent": 0,
+            "late": 0,
+            "attendance_percentage": 0,
+        }
+
+    present = sum(
+        1
+        for record in attendance_records
+        if record.attendance_status.lower() == "present"
+    )
+
+    absent = sum(
+        1
+        for record in attendance_records
+        if record.attendance_status.lower() == "absent"
+    )
+
+    late = sum(
+        1
+        for record in attendance_records
+        if record.attendance_status.lower() == "late"
+    )
+
+    attendance_percentage = round(
+        (present / total_attendance) * 100,
+        2,
+    )
+
+    return {
+        "total_attendance": total_attendance,
+        "present": present,
+        "absent": absent,
+        "late": late,
+        "attendance_percentage": attendance_percentage,
+    }
