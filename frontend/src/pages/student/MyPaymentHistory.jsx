@@ -47,8 +47,6 @@ function MyPaymentHistory() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Payment ID</th>
-                <th>Fee Record ID</th>
                 <th>Amount</th>
                 <th>Date</th>
                 <th>Method</th>
@@ -59,8 +57,6 @@ function MyPaymentHistory() {
             <tbody>
               {payments.map((payment) => (
                 <tr key={payment.payment_id}>
-                  <td>{payment.payment_id}</td>
-                  <td>{payment.fee_record_id}</td>
                   <td>Rs. {payment.amount}</td>
                   <td>{payment.payment_date}</td>
 
