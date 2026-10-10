@@ -798,3 +798,21 @@
 .table-action-delete:hover {
     background: #b91c1c;
 }
+
+/* ---------- STUDENT PROFILE ---------- */
+
+.profile-page .page-header {
+    margin-bottom: 40px;
+}
+
+.profile-page .page-header .btn {
+    margin-top: 14px;
+}
+
+.profile-page .form-card {
+    margin-bottom: 24px;
+}
+
+.profile-page .form-section h3 {
+    margin-bottom: 24px;
+}
