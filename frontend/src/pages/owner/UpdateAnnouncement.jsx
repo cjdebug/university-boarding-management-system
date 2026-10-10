@@ -12,6 +12,7 @@ function UpdateAnnouncement() {
     announcement_date: "",
     audience: "All Students",
     announcement_status: "active",
+    is_pinned: false,
   });
   
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,7 @@ function UpdateAnnouncement() {
           announcement_date: announcement.announcement_date || "",
           audience: announcement.audience || "All Students",
           announcement_status: announcement.announcement_status || "active",
+          is_pinned: announcement.is_pinned || false,
         });
       } catch (err) {
         setError(err.message);
@@ -73,6 +75,7 @@ function UpdateAnnouncement() {
           announcement_date: formData.announcement_date,
           audience: formData.audience,
           announcement_status: formData.announcement_status,
+          is_pinned: formData.is_pinned,
         }),
       });
 
@@ -160,6 +163,25 @@ function UpdateAnnouncement() {
               >
                 <option value="All Students">All Students</option>
                 <option value="Residents">Residents</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Important Announcement</label>
+
+              <select
+                name="is_pinned"
+                value={formData.is_pinned ? "true" : "false"}
+                onChange={(event) =>
+                  setFormData({
+                    ...formData,
+                    is_pinned: event.target.value === "true",
+                  })
+                }
+                required
+              >
+                <option value="false">Not Pinned</option>
+                <option value="true">Pinned</option>
               </select>
             </div>
 

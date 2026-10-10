@@ -52,6 +52,7 @@ function MyFeedback() {
                 <th>Message</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Owner Response</th>
               </tr>
             </thead>
 
@@ -74,6 +75,7 @@ function MyFeedback() {
                         {status}
                       </span>
                     </td>
+                    <td>{feedback.owner_response || "No response yet."}</td>
                   </tr>
                 );
               })}

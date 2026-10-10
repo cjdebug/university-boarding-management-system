@@ -87,64 +87,76 @@ const handleDelete = async (announcementId) => {
                 <th>Date</th>
                 <th>Audience</th>
                 <th>Status</th>
+                <th>Importance</th>
                 <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {announcements.map((announcement) => {
-                const status =
-                  announcement.status ||
-                  announcement.announcement_status ||
-                  "Active";
+              {[...announcements]
+                .sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned))
+                .map((announcement) => {
+                  const status =
+                    announcement.status ||
+                    announcement.announcement_status ||
+                    "Active";
 
-                return (
-                  <tr key={announcement.announcement_id}>
-                    <td>{announcement.announcement_id}</td>
-                    <td>{announcement.title}</td>
-                    <td>{announcement.message}</td>
-                    <td>
-                      {announcement.announcement_date ||
-                        announcement.date ||
-                        "-"}
-                    </td>
-                    <td>{announcement.audience || "-"}</td>
+                  return (
+                    <tr key={announcement.announcement_id}>
+                      <td>{announcement.announcement_id}</td>
+                      <td>{announcement.title}</td>
+                      <td>{announcement.message}</td>
+                      <td>
+                        {announcement.announcement_date ||
+                          announcement.date ||
+                          "-"}
+                      </td>
+                      <td>{announcement.audience || "-"}</td>
 
-                    <td>
-                      <span
-                        className={`status-badge status-${status.toLowerCase()}`}
-                      >
-                        {status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="table-actions">
-                        <button
-                          type="button"
-                          className="table-action-btn table-action-edit"
-                          onClick={() =>
-                            navigate(
-                              `/owner/announcements/${announcement.announcement_id}/edit`,
-                            )
-                          }
+                      <td>
+                        <span
+                          className={`status-badge status-${status.toLowerCase()}`}
                         >
-                          Edit
-                        </button>
+                          {status}
+                        </span>
+                      </td>
+                      <td>
+                        {announcement.is_pinned ? (
+                          <span className="status-badge status-pinned">
+                            <strong>Pinned</strong>
+                          </span>
+                        ) : (
+                          <span className="status-badge">Normal</span>
+                        )}
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            type="button"
+                            className="table-action-btn table-action-edit"
+                            onClick={() =>
+                              navigate(
+                                `/owner/announcements/${announcement.announcement_id}/edit`,
+                              )
+                            }
+                          >
+                            Edit
+                          </button>
 
-                        <button
-                          type="button"
-                          className="table-action-btn table-action-delete"
-                          onClick={() =>
-                            handleDelete(announcement.announcement_id)
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                          <button
+                            type="button"
+                            className="table-action-btn table-action-delete"
+                            onClick={() =>
+                              handleDelete(announcement.announcement_id)
+                            }
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
