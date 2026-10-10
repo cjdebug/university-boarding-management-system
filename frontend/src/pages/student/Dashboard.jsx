@@ -17,6 +17,9 @@ function StudentDashboard() {
     const [roomAllocation, setRoomAllocation] = useState(null);
     const [roomLoading, setRoomLoading] = useState(true);
 
+    const [attendancePercentage, setAttendancePercentage] = useState(null);
+    const [attendanceLoading, setAttendanceLoading] = useState(true);
+
     useEffect(() => {
       const fetchRoomAllocation = async () => {
         try {
@@ -30,6 +33,21 @@ function StudentDashboard() {
       };
 
       fetchRoomAllocation();
+    }, []);
+
+    useEffect(() => {
+      const fetchAttendancePercentage = async () => {
+        try {
+          const data = await apiRequest("/attendance/my/percentage");
+          setAttendancePercentage(data);
+        } catch (error) {
+          setAttendancePercentage(null);
+        } finally {
+          setAttendanceLoading(false);
+        }
+      };
+
+      fetchAttendancePercentage();
     }, []);
 
   const stats = [
@@ -47,8 +65,14 @@ function StudentDashboard() {
     },
     {
       title: "Attendance",
-      value: "—",
-      subtitle: "Recent attendance records",
+      value: attendanceLoading
+        ? "..."
+        : attendancePercentage
+          ? `${attendancePercentage.attendance_percentage}%`
+          : "No Data",
+      subtitle: attendancePercentage
+        ? `${attendancePercentage.present} present / ${attendancePercentage.total_attendance} records`
+        : "No attendance records",
       icon: CalendarCheck,
     },
     {
