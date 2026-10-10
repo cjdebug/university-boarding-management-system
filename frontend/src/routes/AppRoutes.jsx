@@ -61,6 +61,7 @@ import UpdateComplaint from "../pages/owner/UpdateComplaint";
 import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
 import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
 import UpdateAnnouncement from "../pages/owner/UpdateAnnouncement";
+import UpdateFeedback from "../pages/owner/UpdateFeedback";
 
 function AppRoutes() {
   return (
@@ -188,6 +189,11 @@ function AppRoutes() {
         <Route
           path="/owner/announcements/:announcementId/edit"
           element={<UpdateAnnouncement />}
+        />
+
+        <Route
+          path="/owner/feedback/:feedbackId/edit"
+          element={<UpdateFeedback />}
         />
       </Route>
 

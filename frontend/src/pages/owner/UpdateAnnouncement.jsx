@@ -11,8 +11,9 @@ function UpdateAnnouncement() {
     message: "",
     announcement_date: "",
     audience: "All Students",
+    announcement_status: "active",
   });
-
+  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -37,6 +38,7 @@ function UpdateAnnouncement() {
           message: announcement.message || "",
           announcement_date: announcement.announcement_date || "",
           audience: announcement.audience || "All Students",
+          announcement_status: announcement.announcement_status || "active",
         });
       } catch (err) {
         setError(err.message);
@@ -70,6 +72,7 @@ function UpdateAnnouncement() {
           message: formData.message,
           announcement_date: formData.announcement_date,
           audience: formData.audience,
+          announcement_status: formData.announcement_status,
         }),
       });
 
@@ -157,6 +160,20 @@ function UpdateAnnouncement() {
               >
                 <option value="All Students">All Students</option>
                 <option value="Residents">Residents</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Status</label>
+
+              <select
+                name="announcement_status"
+                value={formData.announcement_status}
+                onChange={handleChange}
+                required
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>

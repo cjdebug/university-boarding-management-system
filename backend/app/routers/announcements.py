@@ -9,6 +9,7 @@ from app.models.user import User
 from app.models.room_allocation import RoomAllocation
 from app.schemas.announcement import (
     AnnouncementCreate,
+    AnnouncementUpdate,
     AnnouncementResponse,
 )
 
@@ -110,7 +111,7 @@ def get_announcements(
 )
 def update_announcement(
     announcement_id: int,
-    announcement_data: AnnouncementCreate,
+    announcement_data: AnnouncementUpdate,
     db: Session = Depends(get_db),
 ):
     announcement = (
@@ -129,6 +130,7 @@ def update_announcement(
     announcement.message = announcement_data.message
     announcement.announcement_date = announcement_data.announcement_date
     announcement.audience = announcement_data.audience
+    announcement.announcement_status = announcement_data.announcement_status
 
     db.commit()
     db.refresh(announcement)

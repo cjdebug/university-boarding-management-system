@@ -115,3 +115,62 @@ def get_my_feedback(
     ).all()
 
     return feedback
+
+# OWNER - update feedback
+@router.put(
+    "/{feedback_id}",
+    response_model=FeedbackResponse,
+)
+def update_feedback(
+    feedback_id: int,
+    feedback_data: FeedbackResponse,
+    db: Session = Depends(get_db),
+):
+    feedback = (
+        db.query(Feedback)
+        .filter(Feedback.feedback_id == feedback_id)
+        .first()
+    )
+
+    if not feedback:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Feedback not found",
+        )
+
+    feedback.feedback_type = feedback_data.feedback_type
+    feedback.message = feedback_data.message
+    feedback.feedback_status = feedback_data.feedback_status
+
+    db.commit()
+    db.refresh(feedback)
+
+    return feedback
+
+
+# OWNER - delete feedback
+@router.delete(
+    "/{feedback_id}",
+)
+def delete_feedback(
+    feedback_id: int,
+    db: Session = Depends(get_db),
+):
+    feedback = (
+        db.query(Feedback)
+        .filter(Feedback.feedback_id == feedback_id)
+        .first()
+    )
+
+    if not feedback:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Feedback not found",
+        )
+
+    db.delete(feedback)
+    db.commit()
+
+    return {
+        "message": "Feedback deleted successfully",
+    }
