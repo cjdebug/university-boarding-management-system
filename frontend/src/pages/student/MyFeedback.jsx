@@ -47,7 +47,6 @@ function MyFeedback() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Feedback ID</th>
                 <th>Feedback Type</th>
                 <th>Message</th>
                 <th>Date</th>
@@ -63,7 +62,6 @@ function MyFeedback() {
 
                 return (
                   <tr key={feedback.feedback_id}>
-                    <td>{feedback.feedback_id}</td>
                     <td>{feedback.feedback_type}</td>
                     <td>{feedback.message}</td>
                     <td>{feedback.feedback_date || "-"}</td>
