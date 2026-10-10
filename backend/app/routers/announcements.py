@@ -131,6 +131,7 @@ def update_announcement(
     announcement.announcement_date = announcement_data.announcement_date
     announcement.audience = announcement_data.audience
     announcement.announcement_status = announcement_data.announcement_status
+    announcement.is_pinned = announcement_data.is_pinned
 
     db.commit()
     db.refresh(announcement)

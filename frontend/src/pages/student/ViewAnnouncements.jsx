@@ -56,33 +56,43 @@ function ViewAnnouncements() {
             </thead>
 
             <tbody>
-              {announcements.map((announcement) => {
-                const status =
-                  announcement.status ||
-                  announcement.announcement_status ||
-                  "Active";
+              {[...announcements]
+                .sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned))
+                .map((announcement) => {
+                  const status =
+                    announcement.status ||
+                    announcement.announcement_status ||
+                    "Active";
 
-                return (
-                  <tr key={announcement.announcement_id}>
-                    <td>{announcement.title}</td>
-                    <td>{announcement.message}</td>
-                    <td>
-                      {announcement.announcement_date ||
-                        announcement.date ||
-                        "-"}
-                    </td>
-                    <td>{announcement.audience || "-"}</td>
+                  return (
+                    <tr key={announcement.announcement_id}>
+                      <td>
+                        {announcement.is_pinned && (
+                          <div>
+                            <strong>Important</strong>
+                          </div>
+                        )}
 
-                    <td>
-                      <span
-                        className={`status-badge status-${status.toLowerCase()}`}
-                      >
-                        {status}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+                        <div>{announcement.title}</div>
+                      </td>
+                      <td>{announcement.message}</td>
+                      <td>
+                        {announcement.announcement_date ||
+                          announcement.date ||
+                          "-"}
+                      </td>
+                      <td>{announcement.audience || "-"}</td>
+
+                      <td>
+                        <span
+                          className={`status-badge status-${status.toLowerCase()}`}
+                        >
+                          {status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

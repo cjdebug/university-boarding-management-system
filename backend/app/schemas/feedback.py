@@ -8,6 +8,13 @@ class FeedbackCreate(BaseModel):
     message: str
 
 
+class FeedbackUpdate(BaseModel):
+    feedback_type: str
+    message: str
+    feedback_status: str
+    owner_response: str | None = None
+
+
 class FeedbackResponse(BaseModel):
     feedback_id: int
     student_id: int
@@ -15,6 +22,7 @@ class FeedbackResponse(BaseModel):
     message: str
     feedback_date: date
     feedback_status: str
+    owner_response: str | None = None
 
     class Config:
         from_attributes = True

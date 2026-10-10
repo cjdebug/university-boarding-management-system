@@ -16,6 +16,7 @@ class AnnouncementUpdate(BaseModel):
     announcement_date: date
     audience: str
     announcement_status: str
+    is_pinned: bool = False
 
 
 class AnnouncementResponse(BaseModel):
@@ -25,6 +26,7 @@ class AnnouncementResponse(BaseModel):
     announcement_date: date
     audience: str
     announcement_status: str
+    is_pinned: bool
 
     class Config:
         from_attributes = True

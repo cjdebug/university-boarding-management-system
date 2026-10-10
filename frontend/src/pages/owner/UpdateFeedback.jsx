@@ -13,6 +13,7 @@ function UpdateFeedback() {
     message: "",
     feedback_date: "",
     feedback_status: "submitted",
+    owner_response: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,7 @@ function UpdateFeedback() {
           message: feedback.message,
           feedback_date: feedback.feedback_date,
           feedback_status: feedback.feedback_status || "submitted",
+          owner_response: feedback.owner_response || "",
         });
       } catch (err) {
         setError(err.message);
@@ -79,6 +81,7 @@ function UpdateFeedback() {
           message: formData.message,
           feedback_date: formData.feedback_date,
           feedback_status: formData.feedback_status,
+          owner_response: formData.owner_response,
         }),
       });
 
@@ -202,6 +205,17 @@ function UpdateFeedback() {
                 value={formData.message}
                 onChange={handleChange}
                 required
+              />
+            </div>
+
+            <div className="form-group full-width">
+              <label>Owner Response</label>
+
+              <textarea
+                name="owner_response"
+                value={formData.owner_response}
+                onChange={handleChange}
+                placeholder="Write a response to the student"
               />
             </div>
 

@@ -35,9 +35,14 @@ class Feedback(Base):
     )
 
     feedback_status: Mapped[str] = mapped_column(
-        String(20),
-        default="submitted",
-        nullable=False,
+    String(20),
+    default="submitted",
+    nullable=False,
+    )
+
+    owner_response: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
     )
 
     student = relationship("Student")

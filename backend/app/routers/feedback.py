@@ -13,6 +13,7 @@ from app.models.notification import Notification
 
 from app.schemas.feedback import (
     FeedbackCreate,
+    FeedbackUpdate,
     FeedbackResponse,
 )
 
@@ -123,7 +124,7 @@ def get_my_feedback(
 )
 def update_feedback(
     feedback_id: int,
-    feedback_data: FeedbackResponse,
+    feedback_data: FeedbackUpdate,
     db: Session = Depends(get_db),
 ):
     feedback = (
@@ -141,6 +142,7 @@ def update_feedback(
     feedback.feedback_type = feedback_data.feedback_type
     feedback.message = feedback_data.message
     feedback.feedback_status = feedback_data.feedback_status
+    feedback.owner_response = feedback_data.owner_response
 
     db.commit()
     db.refresh(feedback)
