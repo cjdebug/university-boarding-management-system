@@ -62,6 +62,8 @@ import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
 import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
 import UpdateAnnouncement from "../pages/owner/UpdateAnnouncement";
 import UpdateFeedback from "../pages/owner/UpdateFeedback";
+import MyProfile from "../pages/student/MyProfile";
+import EditProfile from "../pages/student/EditProfile";
 
 function AppRoutes() {
   return (
@@ -199,6 +201,10 @@ function AppRoutes() {
 
       <Route path="/student" element={<StudentLayout />}>
         <Route path="dashboard" element={<StudentDashboard />} />
+
+        <Route path="profile" element={<MyProfile />} />
+
+        <Route path="profile/edit" element={<EditProfile />} />
 
         <Route path="room-allocation" element={<MyRoomAllocation />} />
 

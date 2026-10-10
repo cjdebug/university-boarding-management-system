@@ -75,3 +75,40 @@ class StudentResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class StudentUpdate(BaseModel):
+    full_name: Optional[str] = None
+
+    phone_number: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+    address: Optional[str] = None
+
+    guardian_name: Optional[str] = None
+    guardian_phone: Optional[str] = None
+
+    emergency_contact_name: Optional[str] = None
+    emergency_contact_phone: Optional[str] = None
+
+    @field_validator(
+        "phone_number",
+        "guardian_phone",
+        "emergency_contact_phone"
+    )
+    @classmethod
+    def validate_phone_number(cls, value):
+        if value is None or value == "":
+            return None
+
+        cleaned = value.replace(" ", "").replace("-", "")
+
+        if not cleaned.isdigit():
+            raise ValueError("Phone number must contain only digits")
+
+        if len(cleaned) != 10:
+            raise ValueError("Phone number must contain exactly 10 digits")
+
+        if not cleaned.startswith("0"):
+            raise ValueError("Phone number must start with 0")
+
+        return cleaned
