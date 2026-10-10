@@ -1,10 +1,36 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewLeaveRequests() {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const handleDelete = async (leaveRequestId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this leave request?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/leave-requests/${leaveRequestId}`, {
+        method: "DELETE",
+      });
+
+      setRequests(
+        requests.filter(
+          (request) => request.leave_request_id !== leaveRequestId,
+        ),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   useEffect(() => {
     const fetchLeaveRequests = async () => {
@@ -54,6 +80,7 @@ function ViewLeaveRequests() {
                 <th>End Date</th>
                 <th>Reason</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -74,6 +101,31 @@ function ViewLeaveRequests() {
                       {request.request_status}
                     </span>
                   </td>
+
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-edit"
+                        onClick={() =>
+                          navigate(
+                            `/owner/leave-requests/${request.leave_request_id}/edit`,
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-delete"
+                        onClick={() => handleDelete(request.leave_request_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                  
                 </tr>
               ))}
             </tbody>

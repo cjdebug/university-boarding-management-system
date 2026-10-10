@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import Date, String
+from sqlalchemy import Boolean, Date, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -38,5 +38,11 @@ class Announcement(Base):
     announcement_status: Mapped[str] = mapped_column(
         String(20),
         default="active",
+        nullable=False,
+    )
+
+    is_pinned: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
         nullable=False,
     )

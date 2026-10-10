@@ -9,6 +9,12 @@ class LeaveRequestCreate(BaseModel):
     end_date: date
     reason: str
 
+class LeaveRequestUpdate(BaseModel):
+    leave_type: str
+    start_date: date
+    end_date: date
+    reason: str
+    request_status: str
 
 class LeaveRequestResponse(BaseModel):
     leave_request_id: int

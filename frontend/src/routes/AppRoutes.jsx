@@ -26,6 +26,7 @@ import StudentFeePaymentManagement from "../pages/student/StudentFeePaymentManag
 import ViewAttendanceRecords from "../pages/owner/ViewAttendanceRecords";
 import AttendanceManagement from "../pages/owner/AttendanceManagement";
 import MyAttendance from "../pages/student/MyAttendance";
+import BulkAttendance from "../pages/owner/BulkAttendance";
 import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
 import MyLeaveRequests from "../pages/student/MyLeaveRequests";
 import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
@@ -50,6 +51,17 @@ import AttendanceReport from "../pages/owner/reports/AttendanceReport";
 import MaintenanceReport from "../pages/owner/reports/MaintenanceReport";
 import CommunicationTurnoverReport from "../pages/owner/reports/CommunicationTurnoverReport";
 import Reports from "../pages/owner/Reports";
+import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
+import UpdatePayment from "../pages/owner/UpdatePayment";
+import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
+import UpdateAttendance from "../pages/owner/UpdateAttendance";
+import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
+import UpdateMaintenanceRequest from "../pages/owner/UpdateMaintenanceRequest";
+import UpdateComplaint from "../pages/owner/UpdateComplaint";
+import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
+import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
+import UpdateAnnouncement from "../pages/owner/UpdateAnnouncement";
+import UpdateFeedback from "../pages/owner/UpdateFeedback";
 
 function AppRoutes() {
   return (
@@ -72,11 +84,18 @@ function AppRoutes() {
 
         <Route path="attendance/add" element={<MarkAttendance />} />
 
+        <Route path="attendance/bulk" element={<BulkAttendance />} />
+
         <Route path="room-allocations/add" element={<AllocateRoom />} />
 
         <Route
           path="maintenance-requests/add"
           element={<CreateMaintenanceRequest />}
+        />
+
+        <Route
+          path="/owner/maintenance-requests/:maintenance_request_id/edit"
+          element={<UpdateMaintenanceRequest />}
         />
 
         <Route path="announcements/add" element={<CreateAnnouncement />} />
@@ -91,6 +110,8 @@ function AppRoutes() {
 
         <Route path="payments/add" element={<RecordPayment />} />
 
+        <Route path="payments/:payment_id/edit" element={<UpdatePayment />} />
+
         <Route path="payments" element={<ViewPaymentHistory />} />
 
         <Route path="attendance" element={<ViewAttendanceRecords />} />
@@ -103,6 +124,11 @@ function AppRoutes() {
         <Route path="leave-requests" element={<ViewLeaveRequests />} />
 
         <Route
+          path="leave-requests/:leave_request_id/edit"
+          element={<UpdateLeaveRequest />}
+        />
+
+        <Route
           path="maintenance-requests"
           element={<ViewMaintenanceRequests />}
         />
@@ -110,6 +136,11 @@ function AppRoutes() {
         <Route path="operations" element={<OperationsManagement />} />
 
         <Route path="complaints" element={<ViewComplaints />} />
+
+        <Route
+          path="/owner/complaints/:complaint_id/edit"
+          element={<UpdateComplaint />}
+        />
 
         <Route path="announcements" element={<OwnerViewAnnouncements />} />
 
@@ -131,6 +162,38 @@ function AppRoutes() {
         <Route
           path="reports/communication-turnover"
           element={<CommunicationTurnoverReport />}
+        />
+
+        <Route
+          path="fee-records/:fee_record_id/edit"
+          element={<UpdateFeeRecord />}
+        />
+
+        <Route path="fee-records/overdue" element={<OverdueFeeRecords />} />
+
+        <Route
+          path="attendance/:attendance_id/edit"
+          element={<UpdateAttendance />}
+        />
+
+        <Route
+          path="/owner/complaints/statistics"
+          element={<ComplaintStatistics />}
+        />
+
+        <Route
+          path="/owner/maintenance-requests/room-history"
+          element={<RoomMaintenanceHistory />}
+        />
+
+        <Route
+          path="/owner/announcements/:announcementId/edit"
+          element={<UpdateAnnouncement />}
+        />
+
+        <Route
+          path="/owner/feedback/:feedbackId/edit"
+          element={<UpdateFeedback />}
         />
       </Route>
 

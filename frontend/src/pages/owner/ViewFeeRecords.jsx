@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewFeeRecords() {
+  const navigate = useNavigate();
+
   const [feeRecords, setFeeRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -21,6 +25,38 @@ function ViewFeeRecords() {
     fetchFeeRecords();
   }, []);
 
+  const handleDelete = async (feeRecordId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this fee record?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/fee-records/${feeRecordId}`, {
+        method: "DELETE",
+      });
+
+      setFeeRecords((currentRecords) =>
+        currentRecords.filter((fee) => fee.fee_record_id !== feeRecordId),
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const filteredFeeRecords = feeRecords.filter((fee) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      String(fee.student_id).includes(search) ||
+      fee.fee_type.toLowerCase().includes(search) ||
+      fee.fee_status.toLowerCase().includes(search)
+    );
+  });
+
   if (loading) {
     return (
       <div className="page-container">
@@ -38,11 +74,26 @@ function ViewFeeRecords() {
 
       {error && <div className="message-error">{error}</div>}
 
+      <div className="form-group">
+        <label>Search Fee Records</label>
+
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by student ID, fee type, or status"
+        />
+      </div>
+
       {!error && feeRecords.length === 0 && (
         <div className="empty-state">No fee records found.</div>
       )}
 
-      {feeRecords.length > 0 && (
+      {feeRecords.length > 0 && filteredFeeRecords.length === 0 && (
+        <div className="empty-state">No fee records match your search.</div>
+      )}
+
+      {filteredFeeRecords.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
@@ -54,16 +105,21 @@ function ViewFeeRecords() {
                 <th>Due Date</th>
                 <th>Status</th>
                 <th>Description</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {feeRecords.map((fee) => (
+              {filteredFeeRecords.map((fee) => (
                 <tr key={fee.fee_record_id}>
                   <td>{fee.fee_record_id}</td>
+
                   <td>{fee.student_id}</td>
+
                   <td>{fee.fee_type}</td>
+
                   <td>Rs. {fee.amount}</td>
+
                   <td>{fee.due_date}</td>
 
                   <td>
@@ -73,6 +129,30 @@ function ViewFeeRecords() {
                   </td>
 
                   <td>{fee.description || "-"}</td>
+
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-edit"
+                        onClick={() =>
+                          navigate(
+                            `/owner/fee-records/${fee.fee_record_id}/edit`,
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="table-action-btn table-action-delete"
+                        onClick={() => handleDelete(fee.fee_record_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

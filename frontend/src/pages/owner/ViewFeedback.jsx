@@ -1,10 +1,43 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewFeedback() {
+  const navigate = useNavigate();
+
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleDelete = async (feedbackId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this feedback?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage("");
+      setError("");
+
+      await apiRequest(`/feedback/${feedbackId}`, {
+        method: "DELETE",
+      });
+
+      setFeedbackList((currentFeedback) =>
+        currentFeedback.filter(
+          (feedback) => feedback.feedback_id !== feedbackId,
+        ),
+      );
+
+      setMessage("Feedback deleted successfully.");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -36,6 +69,8 @@ function ViewFeedback() {
         <p>Review feedback submitted by student residents.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
+
       {error && <div className="message-error">{error}</div>}
 
       {!error && feedbackList.length === 0 && (
@@ -53,6 +88,7 @@ function ViewFeedback() {
                 <th>Message</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -61,20 +97,52 @@ function ViewFeedback() {
                 const status =
                   feedback.feedback_status || feedback.status || "Submitted";
 
+                const displayStatus = status
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
                 return (
                   <tr key={feedback.feedback_id}>
                     <td>{feedback.feedback_id}</td>
+
                     <td>{feedback.student_id}</td>
+
                     <td>{feedback.feedback_type}</td>
+
                     <td>{feedback.message}</td>
+
                     <td>{feedback.feedback_date || "-"}</td>
 
                     <td>
                       <span
                         className={`status-badge status-${status.toLowerCase()}`}
                       >
-                        {status}
+                        {displayStatus}
                       </span>
+                    </td>
+
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-edit"
+                          onClick={() =>
+                            navigate(
+                              `/owner/feedback/${feedback.feedback_id}/edit`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-delete"
+                          onClick={() => handleDelete(feedback.feedback_id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

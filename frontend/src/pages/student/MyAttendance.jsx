@@ -3,14 +3,20 @@ import { apiRequest } from "../../services/api";
 
 function MyAttendance() {
   const [records, setRecords] = useState([]);
+  const [percentage, setPercentage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMyAttendance = async () => {
       try {
-        const data = await apiRequest("/attendance/my");
-        setRecords(data);
+        const [attendanceData, percentageData] = await Promise.all([
+          apiRequest("/attendance/my"),
+          apiRequest("/attendance/my/percentage"),
+        ]);
+
+        setRecords(attendanceData);
+        setPercentage(percentageData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -38,6 +44,41 @@ function MyAttendance() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && percentage && (
+        <div className="form-card" style={{ marginBottom: "20px" }}>
+          <div className="form-section">
+            <h3>Attendance Summary</h3>
+
+            <div className="report-summary-grid">
+              <div className="report-summary-card">
+                <span>Attendance Percentage</span>
+                <strong>{percentage.attendance_percentage}%</strong>
+              </div>
+
+              <div className="report-summary-card">
+                <span>Total Attendance</span>
+                <strong>{percentage.total_attendance}</strong>
+              </div>
+
+              <div className="report-summary-card">
+                <span>Present</span>
+                <strong>{percentage.present}</strong>
+              </div>
+
+              <div className="report-summary-card">
+                <span>Absent</span>
+                <strong>{percentage.absent}</strong>
+              </div>
+
+              <div className="report-summary-card">
+                <span>Late</span>
+                <strong>{percentage.late}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!error && records.length === 0 && (
         <div className="empty-state">No attendance records found.</div>
       )}
@@ -62,6 +103,7 @@ function MyAttendance() {
                 return (
                   <tr key={record.attendance_id}>
                     <td>{record.attendance_id}</td>
+
                     <td>{record.attendance_date || record.date || "-"}</td>
 
                     <td>
@@ -72,7 +114,7 @@ function MyAttendance() {
                       </span>
                     </td>
 
-                    <td>{record.remarks || "-"}</td>
+                    <td>{record.note || "-"}</td>
                   </tr>
                 );
               })}

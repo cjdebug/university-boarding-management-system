@@ -21,6 +21,14 @@ function AttendanceManagement() {
 
         <div
           className="action-card"
+          onClick={() => navigate("/owner/attendance/bulk")}
+        >
+          <h3>Bulk Attendance</h3>
+          <p>Mark attendance for multiple students at once.</p>
+        </div>
+
+        <div
+          className="action-card"
           onClick={() => navigate("/owner/attendance")}
         >
           <h3>View Attendance Records</h3>
