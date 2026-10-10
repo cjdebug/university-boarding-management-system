@@ -47,7 +47,6 @@ function MyComplaints() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Complaint ID</th>
                 <th>Complaint Type</th>
                 <th>Description</th>
                 <th>Date</th>
@@ -65,7 +64,6 @@ function MyComplaints() {
                   .replace(/\b\w/g, (letter) => letter.toUpperCase());
                 return (
                   <tr key={complaint.complaint_id}>
-                    <td>{complaint.complaint_id}</td>
                     <td>{complaint.complaint_type}</td>
                     <td>{complaint.description}</td>
                     <td>{complaint.complaint_date || complaint.date || "-"}</td>

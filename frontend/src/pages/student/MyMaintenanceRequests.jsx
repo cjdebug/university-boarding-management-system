@@ -47,8 +47,6 @@ function MyMaintenanceRequests() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
-                <th>Room ID</th>
                 <th>Issue Type</th>
                 <th>Description</th>
                 <th>Request Date</th>
@@ -67,8 +65,6 @@ function MyMaintenanceRequests() {
 
                 return (
                   <tr key={request.maintenance_request_id}>
-                    <td>{request.maintenance_request_id}</td>
-                    <td>{request.room_id}</td>
                     <td>{request.issue_type}</td>
                     <td>{request.description}</td>
                     <td>{request.request_date}</td>
