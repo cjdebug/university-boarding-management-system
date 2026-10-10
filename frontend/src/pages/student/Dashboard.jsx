@@ -23,6 +23,9 @@ function StudentDashboard() {
     const [feeRecords, setFeeRecords] = useState([]);
     const [feeLoading, setFeeLoading] = useState(true);
 
+    const [announcements, setAnnouncements] = useState([]);
+    const [announcementLoading, setAnnouncementLoading] = useState(true);
+
     useEffect(() => {
       const fetchRoomAllocation = async () => {
         try {
@@ -68,6 +71,21 @@ function StudentDashboard() {
       fetchFeeRecords();
     }, []);
 
+    useEffect(() => {
+      const fetchAnnouncements = async () => {
+        try {
+          const data = await apiRequest("/announcements");
+          setAnnouncements(data);
+        } catch (error) {
+          setAnnouncements([]);
+        } finally {
+          setAnnouncementLoading(false);
+        }
+      };
+
+      fetchAnnouncements();
+    }, []);
+
   const pendingFees = feeRecords.filter(
     (fee) => fee.fee_status?.toLowerCase() === "pending",
   );
@@ -98,6 +116,27 @@ function StudentDashboard() {
       feeStatus = "Paid";
       feeSubtitle = "All fees paid";
     }
+  }
+
+  const activeAnnouncements = announcements.filter(
+    (announcement) =>
+      (
+        announcement.announcement_status ||
+        announcement.status ||
+        ""
+      ).toLowerCase() === "active",
+  );
+
+  const pinnedAnnouncements = activeAnnouncements.filter(
+    (announcement) => announcement.is_pinned,
+  );
+
+  let announcementSubtitle = "No active announcements";
+
+  if (activeAnnouncements.length > 0) {
+    announcementSubtitle = `${pinnedAnnouncements.length} pinned announcement${
+      pinnedAnnouncements.length === 1 ? "" : "s"
+    }`;
   }
 
   const stats = [
@@ -133,8 +172,10 @@ function StudentDashboard() {
     },
     {
       title: "Announcements",
-      value: "—",
-      subtitle: "Recent boarding updates",
+      value: announcementLoading ? "..." : activeAnnouncements.length,
+      subtitle: announcementLoading
+        ? "Loading announcements..."
+        : announcementSubtitle,
       icon: Megaphone,
     },
   ];
