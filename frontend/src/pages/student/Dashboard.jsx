@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../../services/api";
 import {
   BedDouble,
   CalendarCheck,
@@ -12,11 +14,35 @@ import {
 function StudentDashboard() {
   const navigate = useNavigate();
 
+    const [roomAllocation, setRoomAllocation] = useState(null);
+    const [roomLoading, setRoomLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchRoomAllocation = async () => {
+        try {
+          const data = await apiRequest("/room-allocations/my");
+          setRoomAllocation(data);
+        } catch (error) {
+          setRoomAllocation(null);
+        } finally {
+          setRoomLoading(false);
+        }
+      };
+
+      fetchRoomAllocation();
+    }, []);
+
   const stats = [
     {
       title: "Room Allocation",
-      value: "—",
-      subtitle: "Current assigned room",
+      value: roomLoading
+        ? "..."
+        : roomAllocation
+          ? `Room ${roomAllocation.room_id}`
+          : "Not Assigned",
+      subtitle: roomAllocation
+        ? `Bed ${roomAllocation.bed_number || "-"}`
+        : "No active room allocation",
       icon: BedDouble,
     },
     {
