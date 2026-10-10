@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -102,3 +102,63 @@ def get_announcements(
     announcements = db.query(Announcement).all()
 
     return announcements
+
+# OWNER - update announcement
+@router.put(
+    "/{announcement_id}",
+    response_model=AnnouncementResponse,
+)
+def update_announcement(
+    announcement_id: int,
+    announcement_data: AnnouncementCreate,
+    db: Session = Depends(get_db),
+):
+    announcement = (
+        db.query(Announcement)
+        .filter(Announcement.announcement_id == announcement_id)
+        .first()
+    )
+
+    if not announcement:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Announcement not found",
+        )
+
+    announcement.title = announcement_data.title
+    announcement.message = announcement_data.message
+    announcement.announcement_date = announcement_data.announcement_date
+    announcement.audience = announcement_data.audience
+
+    db.commit()
+    db.refresh(announcement)
+
+    return announcement
+
+
+# OWNER - delete announcement
+@router.delete(
+    "/{announcement_id}",
+)
+def delete_announcement(
+    announcement_id: int,
+    db: Session = Depends(get_db),
+):
+    announcement = (
+        db.query(Announcement)
+        .filter(Announcement.announcement_id == announcement_id)
+        .first()
+    )
+
+    if not announcement:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Announcement not found",
+        )
+
+    db.delete(announcement)
+    db.commit()
+
+    return {
+        "message": "Announcement deleted successfully",
+    }

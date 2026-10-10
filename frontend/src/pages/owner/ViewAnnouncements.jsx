@@ -1,10 +1,42 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function ViewAnnouncements() {
+  const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+const handleDelete = async (announcementId) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this announcement?",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    setMessage("");
+    setError("");
+
+    await apiRequest(`/announcements/${announcementId}`, {
+      method: "DELETE",
+    });
+
+    setAnnouncements((currentAnnouncements) =>
+      currentAnnouncements.filter(
+        (announcement) => announcement.announcement_id !== announcementId,
+      ),
+    );
+
+    setMessage("Announcement deleted successfully.");
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -36,6 +68,8 @@ function ViewAnnouncements() {
         <p>Review boarding announcements created for student residents.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
+
       {error && <div className="message-error">{error}</div>}
 
       {!error && announcements.length === 0 && (
@@ -53,6 +87,7 @@ function ViewAnnouncements() {
                 <th>Date</th>
                 <th>Audience</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -81,6 +116,31 @@ function ViewAnnouncements() {
                       >
                         {status}
                       </span>
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-edit"
+                          onClick={() =>
+                            navigate(
+                              `/owner/announcements/${announcement.announcement_id}/edit`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-delete"
+                          onClick={() =>
+                            handleDelete(announcement.announcement_id)
+                          }
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
