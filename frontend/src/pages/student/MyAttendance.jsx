@@ -88,7 +88,6 @@ function MyAttendance() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Attendance ID</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Remarks</th>
@@ -102,7 +101,6 @@ function MyAttendance() {
 
                 return (
                   <tr key={record.attendance_id}>
-                    <td>{record.attendance_id}</td>
 
                     <td>{record.attendance_date || record.date || "-"}</td>
 

@@ -47,7 +47,6 @@ function MyLeaveRequests() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
                 <th>Leave Type</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -59,7 +58,6 @@ function MyLeaveRequests() {
             <tbody>
               {requests.map((request) => (
                 <tr key={request.leave_request_id}>
-                  <td>{request.leave_request_id}</td>
                   <td>{request.leave_type}</td>
                   <td>{request.start_date}</td>
                   <td>{request.end_date}</td>
