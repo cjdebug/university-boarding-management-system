@@ -20,6 +20,9 @@ function StudentDashboard() {
     const [attendancePercentage, setAttendancePercentage] = useState(null);
     const [attendanceLoading, setAttendanceLoading] = useState(true);
 
+    const [feeRecords, setFeeRecords] = useState([]);
+    const [feeLoading, setFeeLoading] = useState(true);
+
     useEffect(() => {
       const fetchRoomAllocation = async () => {
         try {
@@ -50,6 +53,53 @@ function StudentDashboard() {
       fetchAttendancePercentage();
     }, []);
 
+    useEffect(() => {
+      const fetchFeeRecords = async () => {
+        try {
+          const data = await apiRequest("/fee-records/my");
+          setFeeRecords(data);
+        } catch (error) {
+          setFeeRecords([]);
+        } finally {
+          setFeeLoading(false);
+        }
+      };
+
+      fetchFeeRecords();
+    }, []);
+
+  const pendingFees = feeRecords.filter(
+    (fee) => fee.fee_status?.toLowerCase() === "pending",
+  );
+
+  const overdueFees = feeRecords.filter(
+    (fee) => fee.fee_status?.toLowerCase() === "overdue",
+  );
+
+  const unpaidFees = feeRecords.filter(
+    (fee) => !["paid"].includes(fee.fee_status?.toLowerCase()),
+  );
+
+  let feeStatus = "No Fees";
+  let feeSubtitle = "No fee records found";
+
+  if (feeRecords.length > 0) {
+    if (overdueFees.length > 0) {
+      feeStatus = "Overdue";
+      feeSubtitle = `${overdueFees.length} overdue fee${
+        overdueFees.length > 1 ? "s" : ""
+      }`;
+    } else if (pendingFees.length > 0) {
+      feeStatus = "Pending";
+      feeSubtitle = `${pendingFees.length} pending fee${
+        pendingFees.length > 1 ? "s" : ""
+      }`;
+    } else if (unpaidFees.length === 0) {
+      feeStatus = "Paid";
+      feeSubtitle = "All fees paid";
+    }
+  }
+
   const stats = [
     {
       title: "Room Allocation",
@@ -77,8 +127,8 @@ function StudentDashboard() {
     },
     {
       title: "Fee Status",
-      value: "—",
-      subtitle: "Current boarding fees",
+      value: feeLoading ? "..." : feeStatus,
+      subtitle: feeLoading ? "Checking fee records..." : feeSubtitle,
       icon: CreditCard,
     },
     {
