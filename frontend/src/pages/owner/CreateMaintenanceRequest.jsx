@@ -41,7 +41,7 @@ function CreateMaintenanceRequest() {
       });
 
       setMessage(
-        `Maintenance request ${data.maintenance_request_id} created successfully`,
+        `Maintenance request created successfully`,
       );
 
       setFormData({

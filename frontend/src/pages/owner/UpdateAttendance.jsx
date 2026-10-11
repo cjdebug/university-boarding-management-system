@@ -93,7 +93,7 @@ function UpdateAttendance() {
       );
 
       setMessage(
-        `Attendance updated successfully. Attendance ID: ${updatedAttendance.attendance_id}`,
+        `Attendance updated successfully`,
       );
 
       setTimeout(() => {

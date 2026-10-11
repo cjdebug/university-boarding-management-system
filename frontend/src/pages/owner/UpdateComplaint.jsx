@@ -76,7 +76,7 @@ function UpdateComplaint() {
       });
 
       setMessage(
-        `Complaint updated successfully. Complaint ID: ${updatedComplaint.complaint_id}`,
+        `Complaint updated successfully.`,
       );
 
       setTimeout(() => {

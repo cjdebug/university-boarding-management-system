@@ -76,7 +76,6 @@ def create_fee_record(
 
     return new_fee_record
 
-
 # OWNER - view all fee records
 @router.get(
     "",
@@ -87,7 +86,18 @@ def get_fee_records(
 ):
     fee_records = db.query(FeeRecord).all()
 
+    for fee_record in fee_records:
+        student = db.query(Student).filter(
+            Student.student_id == fee_record.student_id
+        ).first()
+
+        fee_record.student_name = (
+            student.full_name if student else "Unknown Student"
+        )
+
     return fee_records
+
+
 
 
 # OWNER - view overdue fee records
@@ -103,7 +113,17 @@ def get_overdue_fee_records(
         FeeRecord.fee_status != "paid",
     ).all()
 
+    for fee_record in overdue_records:
+        student = db.query(Student).filter(
+            Student.student_id == fee_record.student_id
+        ).first()
+
+        fee_record.student_name = (
+            student.full_name if student else "Unknown Student"
+        )
+
     return overdue_records
+
 
 
 # OWNER - update fee record

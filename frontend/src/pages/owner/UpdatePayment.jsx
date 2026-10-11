@@ -75,7 +75,6 @@ function UpdatePayment() {
 
     try {
       const dataToSend = {
-        fee_record_id: Number(formData.fee_record_id),
         amount: Number(formData.amount),
         payment_date: formData.payment_date,
         payment_method: formData.payment_method,
@@ -123,21 +122,21 @@ function UpdatePayment() {
             <div className="form-group full-width">
               <label>Fee Record</label>
 
-              <select
-                name="fee_record_id"
-                value={formData.fee_record_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Fee Record</option>
+              <input
+                type="text"
+                value={(() => {
+                  const fee = feeRecords.find(
+                    (item) =>
+                      String(item.fee_record_id) ===
+                      String(formData.fee_record_id),
+                  );
 
-                {feeRecords.map((fee) => (
-                  <option key={fee.fee_record_id} value={fee.fee_record_id}>
-                    Fee #{fee.fee_record_id} - Student {fee.student_id} -{" "}
-                    {fee.fee_type}
-                  </option>
-                ))}
-              </select>
+                  return fee
+                    ? `${fee.student_name || "Unknown Student"} - ${fee.fee_type}`
+                    : "Fee record not found";
+                })()}
+                readOnly
+              />
             </div>
 
             <div className="form-group">

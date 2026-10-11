@@ -40,7 +40,7 @@ function AddRoom() {
         body: JSON.stringify(dataToSend),
       });
 
-      setMessage(`Room created successfully. Room ID: ${createdRoom.room_id}`);
+      setMessage(`Room created successfully.`);
 
       setFormData({
         room_number: "",

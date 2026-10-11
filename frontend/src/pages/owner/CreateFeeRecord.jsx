@@ -58,7 +58,7 @@ function CreateFeeRecord() {
       });
 
       setMessage(
-        `Fee record created successfully. Fee ID: ${createdFee.fee_record_id}`,
+        `Fee record created successfully.`,
       );
 
       setFormData({

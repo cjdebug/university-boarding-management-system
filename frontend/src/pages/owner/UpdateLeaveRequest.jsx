@@ -98,7 +98,7 @@ function UpdateLeaveRequest() {
       );
 
       setMessage(
-        `Leave request updated successfully. Request ID: ${updatedRequest.leave_request_id}`,
+        `Leave request updated successfully.`,
       );
 
       setTimeout(() => {

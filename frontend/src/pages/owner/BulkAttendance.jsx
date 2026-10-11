@@ -80,7 +80,7 @@ function BulkAttendance() {
       });
 
       setMessage(
-        `Bulk attendance recorded successfully for ${createdRecords.length} students.`,
+        `Bulk attendance recorded successfully`,
       );
     } catch (err) {
       setError(

@@ -23,6 +23,7 @@ class FeeRecordUpdate(BaseModel):
 class FeeRecordResponse(BaseModel):
     fee_record_id: int
     student_id: int
+    student_name: str | None = None
     fee_type: str
     amount: Decimal
     due_date: date

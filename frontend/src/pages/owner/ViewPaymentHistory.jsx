@@ -4,7 +4,9 @@ import { apiRequest } from "../../services/api";
 
 function ViewPaymentHistory() {
   const navigate = useNavigate();
+
   const [payments, setPayments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -23,14 +25,6 @@ function ViewPaymentHistory() {
     fetchPayments();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="page-container">
-        <div className="loading-text">Loading payment history...</div>
-      </div>
-    );
-  }
-
   const handleDelete = async (paymentId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this payment?",
@@ -41,6 +35,8 @@ function ViewPaymentHistory() {
     }
 
     try {
+      setError("");
+
       await apiRequest(`/payments/${paymentId}`, {
         method: "DELETE",
       });
@@ -53,6 +49,25 @@ function ViewPaymentHistory() {
     }
   };
 
+  
+  const filteredPayments = payments.filter((payment) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    return (
+      (payment.student_name || "").toLowerCase().includes(search) ||
+      (payment.payment_method || "").toLowerCase().includes(search)
+    );
+  });
+
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="loading-text">Loading payment history...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -62,17 +77,33 @@ function ViewPaymentHistory() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label>Search Payment History</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, payment method"
+          />
+        </div>
+      )}
+
       {!error && payments.length === 0 && (
         <div className="empty-state">No payment records found.</div>
       )}
 
-      {payments.length > 0 && (
+      {!error && payments.length > 0 && filteredPayments.length === 0 && (
+        <div className="empty-state">No payment records match your search.</div>
+      )}
+
+      {!error && filteredPayments.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Payment ID</th>
-                <th>Fee Record ID</th>
+                <th>Student Name</th>
                 <th>Amount</th>
                 <th>Payment Date</th>
                 <th>Method</th>
@@ -83,11 +114,12 @@ function ViewPaymentHistory() {
             </thead>
 
             <tbody>
-              {payments.map((payment) => (
+              {filteredPayments.map((payment) => (
                 <tr key={payment.payment_id}>
-                  <td>{payment.payment_id}</td>
-                  <td>{payment.fee_record_id}</td>
+                  <td>{payment.student_name || "Unknown Student"}</td>
+
                   <td>Rs. {payment.amount}</td>
+
                   <td>{payment.payment_date}</td>
 
                   <td>
@@ -96,8 +128,19 @@ function ViewPaymentHistory() {
                     </span>
                   </td>
 
-                  <td>{payment.reference_no || "-"}</td>
-                  <td>{payment.note || "-"}</td>
+                  <td>
+                    {payment.reference_no &&
+                    payment.reference_no.toLowerCase() !== "null"
+                      ? payment.reference_no
+                      : "-"}
+                  </td>
+
+                  <td>
+                    {payment.note && payment.note.toLowerCase() !== "null"
+                      ? payment.note
+                      : "-"}
+                  </td>
+
                   <td>
                     <div className="table-actions">
                       <button

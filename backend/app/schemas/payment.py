@@ -25,6 +25,7 @@ class PaymentUpdate(BaseModel):
 class PaymentResponse(BaseModel):
     payment_id: int
     fee_record_id: int
+    student_name: Optional[str] = None
     amount: Decimal
     payment_date: date
     payment_method: str

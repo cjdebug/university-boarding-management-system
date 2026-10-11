@@ -35,7 +35,7 @@ function SubmitMaintenanceRequest() {
       });
 
       setMessage(
-        `Maintenance request submitted successfully. Request ID: ${createdRequest.maintenance_request_id}`,
+        `Maintenance request submitted successfully.`,
       );
 
       setFormData({

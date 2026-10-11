@@ -54,6 +54,8 @@ def get_my_room_allocation(
             detail="No active room allocation found",
         )
 
+    allocation.student_name = student.full_name
+
     return allocation
 
 

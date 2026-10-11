@@ -80,7 +80,7 @@ function UpdateMaintenanceRequest() {
       );
 
       setMessage(
-        `Maintenance request updated successfully. Request ID: ${updatedRequest.maintenance_request_id}`,
+        `Maintenance request updated successfully.`,
       );
 
       setTimeout(() => {

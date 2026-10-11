@@ -60,7 +60,7 @@ function MarkAttendance() {
       });
 
       setMessage(
-        `Attendance recorded successfully. Attendance ID: ${createdAttendance.attendance_id}`,
+        `Attendance recorded successfully`,
       );
 
       setFormData({
