@@ -12,6 +12,10 @@ class MaintenanceRequestUpdate(BaseModel):
     description: str
     request_status: str
 
+class MaintenanceRequestStudentUpdate(BaseModel):
+    issue_type: str
+    description: str
+
 class MaintenanceRequestResponse(BaseModel):
     maintenance_request_id: int
     student_id: int

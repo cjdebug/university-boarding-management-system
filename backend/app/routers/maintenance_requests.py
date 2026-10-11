@@ -15,6 +15,7 @@ from app.models.notification import Notification
 from app.schemas.maintenance_request import (
     MaintenanceRequestCreate,
     MaintenanceRequestUpdate,
+    MaintenanceRequestStudentUpdate,
     MaintenanceRequestResponse,
 )
 
@@ -103,6 +104,52 @@ def get_maintenance_requests(
     requests = db.query(MaintenanceRequest).all()
 
     return requests
+
+# STUDENT - update own maintenance request while still pending
+@router.put(
+    "/my/{maintenance_request_id}",
+    response_model=MaintenanceRequestResponse,
+)
+def update_my_maintenance_request(
+    maintenance_request_id: int,
+    request_data: MaintenanceRequestStudentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    maintenance_request = db.query(MaintenanceRequest).filter(
+        MaintenanceRequest.maintenance_request_id == maintenance_request_id,
+        MaintenanceRequest.student_id == student.student_id,
+    ).first()
+
+    if not maintenance_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Maintenance request not found",
+        )
+
+    if maintenance_request.request_status.lower() != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending maintenance requests can be updated.",
+        )
+
+    maintenance_request.issue_type = request_data.issue_type
+    maintenance_request.description = request_data.description
+
+    db.commit()
+    db.refresh(maintenance_request)
+
+    return maintenance_request
 
 # OWNER - update maintenance request
 @router.put(

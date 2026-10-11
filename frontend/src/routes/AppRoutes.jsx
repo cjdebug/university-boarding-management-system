@@ -35,6 +35,7 @@ import StudentAttendanceManagement from "../pages/student/StudentAttendanceManag
 import ViewLeaveRequests from "../pages/owner/ViewLeaveRequests";
 import SubmitMaintenanceRequest from "../pages/student/SubmitMaintenanceRequest";
 import MyMaintenanceRequests from "../pages/student/MyMaintenanceRequests";
+import StudentUpdateMaintenanceRequest from "../pages/student/StudentUpdateMaintenanceRequest";
 import StudentOperationsManagement from "../pages/student/StudentOperationsManagement";
 import ViewMaintenanceRequests from "../pages/owner/ViewMaintenanceRequests";
 import OperationsManagement from "../pages/owner/OperationsManagement";
@@ -235,6 +236,11 @@ function AppRoutes() {
         <Route
           path="maintenance-request"
           element={<SubmitMaintenanceRequest />}
+        />
+
+        <Route
+          path="maintenance-requests/:maintenance_request_id/update"
+          element={<StudentUpdateMaintenanceRequest />}
         />
 
         <Route
