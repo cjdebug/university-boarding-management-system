@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
-const today = new Date().toISOString().split("T")[0];
-
 function UpdateLeaveRequest() {
   const navigate = useNavigate();
   const { leave_request_id } = useParams();
@@ -37,7 +35,8 @@ function UpdateLeaveRequest() {
         setStudents(studentsData);
 
         const leaveRequest = leaveRequests.find(
-          (request) => request.leave_request_id === Number(leave_request_id),
+          (request) =>
+            String(request.leave_request_id) === String(leave_request_id),
         );
 
         if (!leaveRequest) {
@@ -67,12 +66,9 @@ function UpdateLeaveRequest() {
     loadData();
   }, [leave_request_id]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const selectedStudent = students.find(
+    (student) => String(student.student_id) === String(formData.student_id),
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,25 +77,14 @@ function UpdateLeaveRequest() {
     setError("");
 
     try {
-      const dataToSend = {
-        leave_type: formData.leave_type,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-        reason: formData.reason,
-        request_status: formData.request_status,
-      };
+      await apiRequest(`/leave-requests/${leave_request_id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          request_status: formData.request_status,
+        }),
+      });
 
-      const updatedRequest = await apiRequest(
-        `/leave-requests/${leave_request_id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(dataToSend),
-        },
-      );
-
-      setMessage(
-        `Leave request updated successfully.`,
-      );
+      setMessage("Leave request updated successfully.");
 
       setTimeout(() => {
         navigate("/owner/leave-requests");
@@ -125,11 +110,10 @@ function UpdateLeaveRequest() {
     <div className="page-container">
       <div className="page-header">
         <h1>Update Leave Request</h1>
-        <p>Update a student leave request and its status.</p>
+        <p>Review the leave request and update its status.</p>
       </div>
 
       {message && <div className="message-success">{message}</div>}
-
       {error && <div className="message-error">{error}</div>}
 
       {!error && (
@@ -141,38 +125,21 @@ function UpdateLeaveRequest() {
               <div className="form-group full-width">
                 <label>Student</label>
 
-                <select
-                  name="student_id"
-                  value={formData.student_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Student</option>
-
-                  {students.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.registration_no} - {student.full_name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={
+                    selectedStudent
+                      ? `${selectedStudent.registration_no} - ${selectedStudent.full_name}`
+                      : "Unknown Student"
+                  }
+                  readOnly
+                />
               </div>
 
               <div className="form-group">
                 <label>Leave Type</label>
 
-                <select
-                  name="leave_type"
-                  value={formData.leave_type}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Leave Type</option>
-                  <option value="Home Visit">Home Visit</option>
-                  <option value="Overnight Leave">Overnight Leave</option>
-                  <option value="Personal">Personal</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Other">Other</option>
-                </select>
+                <input type="text" value={formData.leave_type} readOnly />
               </div>
 
               <div className="form-group">
@@ -181,7 +148,12 @@ function UpdateLeaveRequest() {
                 <select
                   name="request_status"
                   value={formData.request_status}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData((current) => ({
+                      ...current,
+                      request_status: e.target.value,
+                    }))
+                  }
                   required
                 >
                   <option value="pending">Pending</option>
@@ -193,38 +165,19 @@ function UpdateLeaveRequest() {
               <div className="form-group">
                 <label>Start Date</label>
 
-                <input
-                  type="date"
-                  name="start_date"
-                  value={formData.start_date}
-                  onChange={handleChange}
-                  min={today}
-                  required
-                />
+                <input type="date" value={formData.start_date} readOnly />
               </div>
 
               <div className="form-group">
                 <label>End Date</label>
 
-                <input
-                  type="date"
-                  name="end_date"
-                  value={formData.end_date}
-                  onChange={handleChange}
-                  min={formData.start_date || today}
-                  required
-                />
+                <input type="date" value={formData.end_date} readOnly />
               </div>
 
               <div className="form-group full-width">
                 <label>Reason</label>
 
-                <textarea
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleChange}
-                  required
-                />
+                <textarea value={formData.reason} readOnly />
               </div>
             </div>
           </div>

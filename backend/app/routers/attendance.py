@@ -7,6 +7,7 @@ from app.models.student import Student
 from app.models.user import User
 from app.schemas.attendance import (
     AttendanceCreate,
+    AttendanceUpdate,
     BulkAttendanceCreate,
     AttendanceResponse,
 )
@@ -92,6 +93,7 @@ def create_bulk_attendance(
 
     return created_records
 
+
 # OWNER - view all attendance records
 @router.get(
     "",
@@ -102,8 +104,16 @@ def get_attendance_records(
 ):
     attendance_records = db.query(Attendance).all()
 
-    return attendance_records
+    for record in attendance_records:
+        student = db.query(Student).filter(
+            Student.student_id == record.student_id
+        ).first()
 
+        record.student_name = (
+            student.full_name if student else "Unknown Student"
+        )
+
+    return attendance_records
 
 # OWNER - update attendance record
 @router.put(
@@ -112,7 +122,7 @@ def get_attendance_records(
 )
 def update_attendance(
     attendance_id: int,
-    attendance_data: AttendanceCreate,
+    attendance_data: AttendanceUpdate,
     db: Session = Depends(get_db),
 ):
     attendance = db.query(Attendance).filter(
@@ -125,20 +135,12 @@ def update_attendance(
             detail="Attendance record not found",
         )
 
-    student = db.query(Student).filter(
-        Student.student_id == attendance_data.student_id
-    ).first()
-
-    if not student:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Student not found",
-        )
-
-    attendance.student_id = attendance_data.student_id
+    # Update allowed fields only
     attendance.attendance_date = attendance_data.attendance_date
     attendance.attendance_status = attendance_data.attendance_status
     attendance.note = attendance_data.note
+
+    # Student ID remains unchanged
 
     db.commit()
     db.refresh(attendance)

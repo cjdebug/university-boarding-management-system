@@ -4,7 +4,9 @@ import { apiRequest } from "../../services/api";
 
 function ViewAttendanceRecords() {
   const navigate = useNavigate();
+
   const [records, setRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,6 +35,8 @@ function ViewAttendanceRecords() {
     }
 
     try {
+      setError("");
+
       await apiRequest(`/attendance/${attendanceId}`, {
         method: "DELETE",
       });
@@ -46,6 +50,17 @@ function ViewAttendanceRecords() {
       setError(err.message);
     }
   };
+
+  const filteredRecords = records.filter((record) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    const attendanceStatus = record.attendance_status || record.status || "";
+
+    return (
+      (record.student_name || "").toLowerCase().includes(search) ||
+      attendanceStatus.toLowerCase().includes(search)
+    );
+  });
 
   if (loading) {
     return (
@@ -64,17 +79,35 @@ function ViewAttendanceRecords() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label>Search Attendance Records</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name or attendance status"
+          />
+        </div>
+      )}
+
       {!error && records.length === 0 && (
         <div className="empty-state">No attendance records found.</div>
       )}
 
-      {records.length > 0 && (
+      {!error && records.length > 0 && filteredRecords.length === 0 && (
+        <div className="empty-state">
+          No attendance records match your search.
+        </div>
+      )}
+
+      {!error && filteredRecords.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Attendance ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Remarks</th>
@@ -83,15 +116,13 @@ function ViewAttendanceRecords() {
             </thead>
 
             <tbody>
-              {records.map((record) => {
+              {filteredRecords.map((record) => {
                 const status =
                   record.status || record.attendance_status || "Unknown";
 
                 return (
                   <tr key={record.attendance_id}>
-                    <td>{record.attendance_id}</td>
-
-                    <td>{record.student_id}</td>
+                    <td>{record.student_name || "Unknown Student"}</td>
 
                     <td>{record.attendance_date || record.date || "-"}</td>
 

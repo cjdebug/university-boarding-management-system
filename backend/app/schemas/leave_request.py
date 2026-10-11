@@ -1,7 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel
-
+from pydantic import BaseModel, ConfigDict
 
 class LeaveRequestCreate(BaseModel):
     leave_type: str
@@ -10,10 +9,8 @@ class LeaveRequestCreate(BaseModel):
     reason: str
 
 class LeaveRequestUpdate(BaseModel):
-    leave_type: str
-    start_date: date
-    end_date: date
-    reason: str
+    model_config = ConfigDict(extra="forbid")
+
     request_status: str
 
 class LeaveRequestStudentUpdate(BaseModel):
@@ -21,15 +18,15 @@ class LeaveRequestStudentUpdate(BaseModel):
     start_date: date
     end_date: date
     reason: str
-    
+
 class LeaveRequestResponse(BaseModel):
     leave_request_id: int
     student_id: int
+    student_name: str | None = None
     leave_type: str
     start_date: date
     end_date: date
     reason: str
     request_status: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
