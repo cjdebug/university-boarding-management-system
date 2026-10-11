@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function MyFeedback() {
+  const navigate = useNavigate();
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,6 +54,7 @@ function MyFeedback() {
                 <th>Date</th>
                 <th>Status</th>
                 <th>Owner Response</th>
+                <th>Action</th>
               </tr>
             </thead>
 
@@ -74,6 +77,21 @@ function MyFeedback() {
                       </span>
                     </td>
                     <td>{feedback.owner_response || "No response yet."}</td>
+                    <td>
+                      {status.toLowerCase() === "submitted" && (
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() =>
+                            navigate(
+                              `/student/feedback/${feedback.feedback_id}/update`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 );
               })}

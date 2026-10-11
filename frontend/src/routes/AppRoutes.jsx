@@ -63,6 +63,7 @@ import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
 import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
 import UpdateAnnouncement from "../pages/owner/UpdateAnnouncement";
 import UpdateFeedback from "../pages/owner/UpdateFeedback";
+import StudentUpdateFeedback from "../pages/student/StudentUpdateFeedback";
 import MyProfile from "../pages/student/MyProfile";
 import EditProfile from "../pages/student/EditProfile";
 
@@ -252,6 +253,11 @@ function AppRoutes() {
         <Route path="feedback/add" element={<SubmitFeedback />} />
 
         <Route path="feedback" element={<MyFeedback />} />
+
+        <Route
+          path="feedback/:feedback_id/update"
+          element={<StudentUpdateFeedback />}
+        />
 
         <Route
           path="feedback-management"

@@ -15,6 +15,11 @@ class FeedbackUpdate(BaseModel):
     owner_response: str | None = None
 
 
+class FeedbackStudentUpdate(BaseModel):
+    feedback_type: str
+    message: str
+
+
 class FeedbackResponse(BaseModel):
     feedback_id: int
     student_id: int

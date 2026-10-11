@@ -14,6 +14,7 @@ from app.models.notification import Notification
 from app.schemas.feedback import (
     FeedbackCreate,
     FeedbackUpdate,
+    FeedbackStudentUpdate,
     FeedbackResponse,
 )
 
@@ -114,6 +115,52 @@ def get_my_feedback(
     feedback = db.query(Feedback).filter(
         Feedback.student_id == student.student_id
     ).all()
+
+    return feedback
+
+# STUDENT - update own feedback while still submitted
+@router.put(
+    "/my/{feedback_id}",
+    response_model=FeedbackResponse,
+)
+def update_my_feedback(
+    feedback_id: int,
+    feedback_data: FeedbackStudentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    feedback = db.query(Feedback).filter(
+        Feedback.feedback_id == feedback_id,
+        Feedback.student_id == student.student_id,
+    ).first()
+
+    if not feedback:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Feedback not found",
+        )
+
+    if feedback.feedback_status.lower() != "submitted":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only submitted feedback can be updated.",
+        )
+
+    feedback.feedback_type = feedback_data.feedback_type
+    feedback.message = feedback_data.message
+
+    db.commit()
+    db.refresh(feedback)
 
     return feedback
 
