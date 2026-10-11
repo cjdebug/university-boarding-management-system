@@ -29,6 +29,8 @@ import MyAttendance from "../pages/student/MyAttendance";
 import BulkAttendance from "../pages/owner/BulkAttendance";
 import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
 import MyLeaveRequests from "../pages/student/MyLeaveRequests";
+import StudentUpdateLeaveRequest from "../pages/student/StudentUpdateLeaveRequest";
+import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
 import ViewLeaveRequests from "../pages/owner/ViewLeaveRequests";
 import SubmitMaintenanceRequest from "../pages/student/SubmitMaintenanceRequest";
@@ -55,7 +57,6 @@ import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
 import UpdatePayment from "../pages/owner/UpdatePayment";
 import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
 import UpdateAttendance from "../pages/owner/UpdateAttendance";
-import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 import UpdateMaintenanceRequest from "../pages/owner/UpdateMaintenanceRequest";
 import UpdateComplaint from "../pages/owner/UpdateComplaint";
 import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
@@ -219,6 +220,11 @@ function AppRoutes() {
         <Route path="leave-request" element={<SubmitLeaveRequest />} />
 
         <Route path="leave-requests" element={<MyLeaveRequests />} />
+
+        <Route
+          path="leave-requests/:leave_request_id/update"
+          element={<StudentUpdateLeaveRequest />}
+        />
 
         <Route
           path="attendance-management"

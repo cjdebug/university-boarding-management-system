@@ -16,6 +16,12 @@ class LeaveRequestUpdate(BaseModel):
     reason: str
     request_status: str
 
+class LeaveRequestStudentUpdate(BaseModel):
+    leave_type: str
+    start_date: date
+    end_date: date
+    reason: str
+    
 class LeaveRequestResponse(BaseModel):
     leave_request_id: int
     student_id: int

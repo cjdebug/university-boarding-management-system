@@ -9,6 +9,7 @@ from app.models.notification import Notification
 from app.schemas.leave_request import (
     LeaveRequestCreate,
     LeaveRequestUpdate,
+    LeaveRequestStudentUpdate,
     LeaveRequestResponse,
 )
 from app.services.auth_service import get_current_user
@@ -178,6 +179,60 @@ def update_leave_request(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid leave request status",
         )
+
+# STUDENT - update own pending leave request
+@router.put(
+    "/my/{leave_request_id}",
+    response_model=LeaveRequestResponse,
+)
+def update_my_leave_request(
+    leave_request_id: int,
+    leave_data: LeaveRequestStudentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    leave_request = db.query(LeaveRequest).filter(
+        LeaveRequest.leave_request_id == leave_request_id,
+        LeaveRequest.student_id == student.student_id,
+    ).first()
+
+    if not leave_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave request not found",
+        )
+
+    if leave_request.request_status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending leave requests can be edited",
+        )
+
+    if leave_data.end_date < leave_data.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End date cannot be before start date",
+        )
+
+    leave_request.leave_type = leave_data.leave_type
+    leave_request.start_date = leave_data.start_date
+    leave_request.end_date = leave_data.end_date
+    leave_request.reason = leave_data.reason
+
+    db.commit()
+    db.refresh(leave_request)
+
+    return leave_request
 
     leave_request.leave_type = leave_data.leave_type
     leave_request.start_date = leave_data.start_date
