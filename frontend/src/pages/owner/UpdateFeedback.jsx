@@ -7,8 +7,7 @@ function UpdateFeedback() {
   const { feedbackId } = useParams();
 
   const [formData, setFormData] = useState({
-    feedback_id: "",
-    student_id: "",
+    student_name: "",
     feedback_type: "",
     message: "",
     feedback_date: "",
@@ -20,27 +19,29 @@ function UpdateFeedback() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const fetchFeedback = async () => {
       try {
         setLoading(true);
         setError("");
+        setNotFound(false);
 
         const data = await apiRequest("/feedback");
 
         const feedback = data.find(
-          (item) => item.feedback_id === Number(feedbackId),
+          (item) => String(item.feedback_id) === String(feedbackId),
         );
 
         if (!feedback) {
+          setNotFound(true);
           setError("Feedback not found.");
           return;
         }
 
         setFormData({
-          feedback_id: feedback.feedback_id,
-          student_id: feedback.student_id,
+          student_name: feedback.student_name || "Unknown Student",
           feedback_type: feedback.feedback_type,
           message: feedback.message,
           feedback_date: feedback.feedback_date,
@@ -48,7 +49,8 @@ function UpdateFeedback() {
           owner_response: feedback.owner_response || "",
         });
       } catch (err) {
-        setError(err.message);
+        setNotFound(true);
+        setError(err.message || "Failed to load feedback.");
       } finally {
         setLoading(false);
       }
@@ -58,10 +60,10 @@ function UpdateFeedback() {
   }, [feedbackId]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((current) => ({
+      ...current,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -72,28 +74,21 @@ function UpdateFeedback() {
     setSuccessMessage("");
 
     try {
-      const updatedFeedback = await apiRequest(`/feedback/${feedbackId}`, {
+      await apiRequest(`/feedback/${feedbackId}`, {
         method: "PUT",
         body: JSON.stringify({
-          feedback_id: Number(formData.feedback_id),
-          student_id: Number(formData.student_id),
-          feedback_type: formData.feedback_type,
-          message: formData.message,
-          feedback_date: formData.feedback_date,
           feedback_status: formData.feedback_status,
-          owner_response: formData.owner_response,
+          owner_response: formData.owner_response.trim() || null,
         }),
       });
 
-      setSuccessMessage(
-        `Feedback ${updatedFeedback.feedback_id} updated successfully.`,
-      );
+      setSuccessMessage("Feedback updated successfully.");
 
       setTimeout(() => {
         navigate("/owner/feedback");
       }, 1000);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to update feedback.");
     } finally {
       setSaving(false);
     }
@@ -107,7 +102,7 @@ function UpdateFeedback() {
     );
   }
 
-  if (error && !formData.feedback_id) {
+  if (notFound) {
     return (
       <div className="page-container">
         <div className="page-header">
@@ -131,7 +126,10 @@ function UpdateFeedback() {
     <div className="page-container">
       <div className="page-header">
         <h1>Update Feedback</h1>
-        <p>Update student feedback and change its status.</p>
+        <p>
+          Review student feedback, update its status, and respond to the
+          student.
+        </p>
       </div>
 
       {successMessage && (
@@ -145,39 +143,16 @@ function UpdateFeedback() {
           <h3>Feedback Details</h3>
 
           <div className="form-grid">
-            <div className="form-group">
-              <label>Feedback ID</label>
+            <div className="form-group full-width">
+              <label>Student Name</label>
 
-              <input type="text" value={formData.feedback_id} disabled />
-            </div>
-
-            <div className="form-group">
-              <label>Student ID</label>
-
-              <input type="text" value={formData.student_id} disabled />
+              <input type="text" value={formData.student_name} readOnly />
             </div>
 
             <div className="form-group">
               <label>Feedback Type</label>
 
-              <select
-                name="feedback_type"
-                value={formData.feedback_type}
-                onChange={handleChange}
-                required
-              >
-                <option value="Suggestion">Suggestion</option>
-
-                <option value="Complaint">Complaint</option>
-
-                <option value="Facilities">Facilities</option>
-
-                <option value="Cleanliness">Cleanliness</option>
-
-                <option value="Service">Service</option>
-
-                <option value="Other">Other</option>
-              </select>
+              <input type="text" value={formData.feedback_type} readOnly />
             </div>
 
             <div className="form-group">
@@ -190,9 +165,7 @@ function UpdateFeedback() {
                 required
               >
                 <option value="submitted">Submitted</option>
-
                 <option value="reviewed">Reviewed</option>
-
                 <option value="resolved">Resolved</option>
               </select>
             </div>
@@ -200,12 +173,7 @@ function UpdateFeedback() {
             <div className="form-group full-width">
               <label>Message</label>
 
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-              />
+              <textarea value={formData.message} readOnly />
             </div>
 
             <div className="form-group full-width">
@@ -216,13 +184,14 @@ function UpdateFeedback() {
                 value={formData.owner_response}
                 onChange={handleChange}
                 placeholder="Write a response to the student"
+                rows={4}
               />
             </div>
 
             <div className="form-group">
               <label>Feedback Date</label>
 
-              <input type="date" value={formData.feedback_date} disabled />
+              <input type="date" value={formData.feedback_date} readOnly />
             </div>
           </div>
         </div>
@@ -236,6 +205,7 @@ function UpdateFeedback() {
             type="button"
             className="btn btn-secondary"
             onClick={() => navigate("/owner/feedback")}
+            disabled={saving}
           >
             Cancel
           </button>

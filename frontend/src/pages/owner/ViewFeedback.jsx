@@ -6,9 +6,25 @@ function ViewFeedback() {
   const navigate = useNavigate();
 
   const [feedbackList, setFeedbackList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      try {
+        const data = await apiRequest("/feedback");
+        setFeedbackList(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeedback();
+  }, []);
 
   const handleDelete = async (feedbackId) => {
     const confirmed = window.confirm(
@@ -39,20 +55,26 @@ function ViewFeedback() {
     }
   };
 
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      try {
-        const data = await apiRequest("/feedback");
-        setFeedbackList(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Search by student name, feedback type, or status
+  const filteredFeedback = feedbackList.filter((feedback) => {
+    const search = searchTerm.trim().toLowerCase();
 
-    fetchFeedback();
-  }, []);
+    const studentName = (feedback.student_name || "").toLowerCase();
+
+    const feedbackType = (feedback.feedback_type || "").toLowerCase();
+
+    const feedbackStatus = (
+      feedback.feedback_status ||
+      feedback.status ||
+      ""
+    ).toLowerCase();
+
+    return (
+      studentName.includes(search) ||
+      feedbackType.includes(search) ||
+      feedbackStatus.includes(search)
+    );
+  });
 
   if (loading) {
     return (
@@ -73,17 +95,36 @@ function ViewFeedback() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label htmlFor="search-feedback">Search Student Feedback</label>
+
+          <input
+            id="search-feedback"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, feedback type, or status"
+          />
+        </div>
+      )}
+
       {!error && feedbackList.length === 0 && (
         <div className="empty-state">No feedback found.</div>
       )}
 
-      {feedbackList.length > 0 && (
+      {!error && feedbackList.length > 0 && filteredFeedback.length === 0 && (
+        <div className="empty-state">
+          No feedback records match your search.
+        </div>
+      )}
+
+      {!error && filteredFeedback.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Feedback ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Feedback Type</th>
                 <th>Message</th>
                 <th>Date</th>
@@ -93,19 +134,17 @@ function ViewFeedback() {
             </thead>
 
             <tbody>
-              {feedbackList.map((feedback) => {
-                const status =
+              {filteredFeedback.map((feedback) => {
+                const feedbackStatus =
                   feedback.feedback_status || feedback.status || "Submitted";
 
-                const displayStatus = status
-                  .replace("_", " ")
+                const displayStatus = feedbackStatus
+                  .replace(/_/g, " ")
                   .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
                 return (
                   <tr key={feedback.feedback_id}>
-                    <td>{feedback.feedback_id}</td>
-
-                    <td>{feedback.student_id}</td>
+                    <td>{feedback.student_name || "Unknown Student"}</td>
 
                     <td>{feedback.feedback_type}</td>
 
@@ -115,7 +154,7 @@ function ViewFeedback() {
 
                     <td>
                       <span
-                        className={`status-badge status-${status.toLowerCase()}`}
+                        className={`status-badge status-${feedbackStatus.toLowerCase()}`}
                       >
                         {displayStatus}
                       </span>
