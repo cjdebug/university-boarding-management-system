@@ -1,4 +1,4 @@
-import { Bell, Search, UserRound } from "lucide-react";
+import { Bell, UserRound } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotificationPanel from "../common/NotificationPanel";
@@ -132,13 +132,6 @@ function TopNavbar({ userType, userName, userId }) {
       </div>
 
       <div className="navbar-right">
-        {isOwner && (
-          <div className="navbar-search">
-            <Search size={19} />
-
-            <input type="text" placeholder="Search students, rooms,..." />
-          </div>
-        )}
 
         <div className="notification-wrapper">
           <button
