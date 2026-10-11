@@ -47,9 +47,8 @@ function ViewRoomAllocations() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Allocation ID</th>
-                <th>Student ID</th>
-                <th>Room ID</th>
+                <th>Student Name</th>
+                <th>Room Number</th>
                 <th>Bed Number</th>
                 <th>Allocation Date</th>
                 <th>Expected Checkout</th>
@@ -60,9 +59,8 @@ function ViewRoomAllocations() {
             <tbody>
               {allocations.map((allocation) => (
                 <tr key={allocation.allocation_id}>
-                  <td>{allocation.allocation_id}</td>
-                  <td>{allocation.student_id}</td>
-                  <td>{allocation.room_id}</td>
+                  <td>{allocation.student_name}</td>
+                  <td>{allocation.room_number}</td>
                   <td>{allocation.bed_number || "-"}</td>
                   <td>{allocation.allocation_date}</td>
                   <td>{allocation.expected_checkout_date || "-"}</td>
