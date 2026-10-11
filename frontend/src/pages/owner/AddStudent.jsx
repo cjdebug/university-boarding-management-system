@@ -59,7 +59,7 @@ function AddStudent() {
       });
 
       setMessage(
-        `Student created successfully. Registration Number: ${createdStudent.registration_no}`,
+        `Student created successfully.`,
       );
 
       setFormData({

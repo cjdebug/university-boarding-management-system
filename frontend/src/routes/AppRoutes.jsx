@@ -29,15 +29,19 @@ import MyAttendance from "../pages/student/MyAttendance";
 import BulkAttendance from "../pages/owner/BulkAttendance";
 import SubmitLeaveRequest from "../pages/student/SubmitLeaveRequest";
 import MyLeaveRequests from "../pages/student/MyLeaveRequests";
+import StudentUpdateLeaveRequest from "../pages/student/StudentUpdateLeaveRequest";
+import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 import StudentAttendanceManagement from "../pages/student/StudentAttendanceManagement";
 import ViewLeaveRequests from "../pages/owner/ViewLeaveRequests";
 import SubmitMaintenanceRequest from "../pages/student/SubmitMaintenanceRequest";
 import MyMaintenanceRequests from "../pages/student/MyMaintenanceRequests";
+import StudentUpdateMaintenanceRequest from "../pages/student/StudentUpdateMaintenanceRequest";
 import StudentOperationsManagement from "../pages/student/StudentOperationsManagement";
 import ViewMaintenanceRequests from "../pages/owner/ViewMaintenanceRequests";
 import OperationsManagement from "../pages/owner/OperationsManagement";
 import SubmitComplaint from "../pages/student/SubmitComplaint";
 import MyComplaints from "../pages/student/MyComplaints";
+import StudentUpdateComplaint from "../pages/student/StudentUpdateComplaint";
 import ViewComplaints from "../pages/owner/ViewComplaints";
 import OwnerViewAnnouncements from "../pages/owner/ViewAnnouncements";
 import StudentViewAnnouncements from "../pages/student/ViewAnnouncements";
@@ -55,13 +59,15 @@ import UpdateFeeRecord from "../pages/owner/UpdateFeeRecord";
 import UpdatePayment from "../pages/owner/UpdatePayment";
 import OverdueFeeRecords from "../pages/owner/OverdueFeeRecords";
 import UpdateAttendance from "../pages/owner/UpdateAttendance";
-import UpdateLeaveRequest from "../pages/owner/UpdateLeaveRequest";
 import UpdateMaintenanceRequest from "../pages/owner/UpdateMaintenanceRequest";
 import UpdateComplaint from "../pages/owner/UpdateComplaint";
 import ComplaintStatistics from "../pages/owner/reports/ComplaintStatistics";
 import RoomMaintenanceHistory from "../pages/owner/RoomMaintenanceHistory";
 import UpdateAnnouncement from "../pages/owner/UpdateAnnouncement";
 import UpdateFeedback from "../pages/owner/UpdateFeedback";
+import StudentUpdateFeedback from "../pages/student/StudentUpdateFeedback";
+import MyProfile from "../pages/student/MyProfile";
+import EditProfile from "../pages/student/EditProfile";
 
 function AppRoutes() {
   return (
@@ -200,6 +206,10 @@ function AppRoutes() {
       <Route path="/student" element={<StudentLayout />}>
         <Route path="dashboard" element={<StudentDashboard />} />
 
+        <Route path="profile" element={<MyProfile />} />
+
+        <Route path="profile/edit" element={<EditProfile />} />
+
         <Route path="room-allocation" element={<MyRoomAllocation />} />
 
         <Route path="fees" element={<MyFees />} />
@@ -215,6 +225,11 @@ function AppRoutes() {
         <Route path="leave-requests" element={<MyLeaveRequests />} />
 
         <Route
+          path="leave-requests/:leave_request_id/update"
+          element={<StudentUpdateLeaveRequest />}
+        />
+
+        <Route
           path="attendance-management"
           element={<StudentAttendanceManagement />}
         />
@@ -222,6 +237,11 @@ function AppRoutes() {
         <Route
           path="maintenance-request"
           element={<SubmitMaintenanceRequest />}
+        />
+
+        <Route
+          path="maintenance-requests/:maintenance_request_id/update"
+          element={<StudentUpdateMaintenanceRequest />}
         />
 
         <Route
@@ -235,11 +255,21 @@ function AppRoutes() {
 
         <Route path="complaints" element={<MyComplaints />} />
 
+        <Route
+          path="complaints/:complaint_id/update"
+          element={<StudentUpdateComplaint />}
+        />
+
         <Route path="announcements" element={<StudentViewAnnouncements />} />
 
         <Route path="feedback/add" element={<SubmitFeedback />} />
 
         <Route path="feedback" element={<MyFeedback />} />
+
+        <Route
+          path="feedback/:feedback_id/update"
+          element={<StudentUpdateFeedback />}
+        />
 
         <Route
           path="feedback-management"

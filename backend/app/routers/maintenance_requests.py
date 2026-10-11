@@ -1,13 +1,13 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
-
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 
 from app.models.maintenance_request import MaintenanceRequest
 from app.models.room_allocation import RoomAllocation
+from app.models.room import Room
 from app.models.student import Student
 from app.models.user import User
 from app.models.notification import Notification
@@ -15,6 +15,7 @@ from app.models.notification import Notification
 from app.schemas.maintenance_request import (
     MaintenanceRequestCreate,
     MaintenanceRequestUpdate,
+    MaintenanceRequestStudentUpdate,
     MaintenanceRequestResponse,
 )
 
@@ -26,6 +27,44 @@ router = APIRouter(
     tags=["Maintenance Requests"],
 )
 
+# Add student and room details to API responses
+def add_display_details(requests, db):
+    student_ids = {item.student_id for item in requests}
+    room_ids = {item.room_id for item in requests}
+
+    students = (
+        db.query(Student)
+        .filter(Student.student_id.in_(student_ids))
+        .all()
+        if student_ids else []
+    )
+
+    rooms = (
+        db.query(Room)
+        .filter(Room.room_id.in_(room_ids))
+        .all()
+        if room_ids else []
+    )
+
+    student_names = {
+        student.student_id: student.full_name
+        for student in students
+    }
+
+    room_numbers = {
+        room.room_id: room.room_number
+        for room in rooms
+    }
+
+    for item in requests:
+        item.student_name = student_names.get(
+            item.student_id, "Unknown Student"
+        )
+        item.room_number = room_numbers.get(
+            item.room_id, "Unknown Room"
+        )
+
+    return requests
 
 # STUDENT - create maintenance request
 @router.post(
@@ -83,14 +122,14 @@ def create_maintenance_request(
             notification_type="maintenance_request",
             is_read=False,
         )
-
         db.add(notification)
 
     db.commit()
     db.refresh(new_request)
 
-    return new_request
+    add_display_details([new_request], db)
 
+    return new_request
 
 # OWNER - read all maintenance requests
 @router.get(
@@ -102,9 +141,82 @@ def get_maintenance_requests(
 ):
     requests = db.query(MaintenanceRequest).all()
 
-    return requests
+    return add_display_details(requests, db)
 
-# OWNER - update maintenance request
+# STUDENT - read own maintenance requests
+@router.get(
+    "/my",
+    response_model=list[MaintenanceRequestResponse],
+)
+def get_my_maintenance_requests(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    requests = db.query(MaintenanceRequest).filter(
+        MaintenanceRequest.student_id == student.student_id
+    ).all()
+
+    return add_display_details(requests, db)
+
+# STUDENT - update own pending maintenance request
+@router.put(
+    "/my/{maintenance_request_id}",
+    response_model=MaintenanceRequestResponse,
+)
+def update_my_maintenance_request(
+    maintenance_request_id: int,
+    request_data: MaintenanceRequestStudentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    maintenance_request = db.query(MaintenanceRequest).filter(
+        MaintenanceRequest.maintenance_request_id == maintenance_request_id,
+        MaintenanceRequest.student_id == student.student_id,
+    ).first()
+
+    if not maintenance_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Maintenance request not found",
+        )
+
+    if maintenance_request.request_status.lower() != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending maintenance requests can be updated.",
+        )
+
+    maintenance_request.issue_type = request_data.issue_type
+    maintenance_request.description = request_data.description
+
+    db.commit()
+    db.refresh(maintenance_request)
+
+    add_display_details([maintenance_request], db)
+
+    return maintenance_request
+
+# OWNER - update maintenance request status only
 @router.put(
     "/{maintenance_request_id}",
     response_model=MaintenanceRequestResponse,
@@ -113,7 +225,14 @@ def update_maintenance_request(
     maintenance_request_id: int,
     request_data: MaintenanceRequestUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    if current_user.role != "owner":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only owners can update maintenance request status",
+        )
+
     maintenance_request = db.query(MaintenanceRequest).filter(
         MaintenanceRequest.maintenance_request_id == maintenance_request_id
     ).first()
@@ -123,21 +242,21 @@ def update_maintenance_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Maintenance request not found",
         )
-    
+
     allowed_statuses = ["pending", "in_progress", "completed"]
 
     if request_data.request_status not in allowed_statuses:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid maintenance request status",
-    )
+        )
 
-    maintenance_request.issue_type = request_data.issue_type
-    maintenance_request.description = request_data.description
     maintenance_request.request_status = request_data.request_status
 
     db.commit()
     db.refresh(maintenance_request)
+
+    add_display_details([maintenance_request], db)
 
     return maintenance_request
 
@@ -166,31 +285,6 @@ def delete_maintenance_request(
         "message": "Maintenance request deleted successfully",
     }
 
-# STUDENT - read only own maintenance requests
-@router.get(
-    "/my",
-    response_model=list[MaintenanceRequestResponse],
-)
-def get_my_maintenance_requests(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    student = db.query(Student).filter(
-        Student.user_id == current_user.user_id
-    ).first()
-
-    if not student:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Student profile not found",
-        )
-
-    requests = db.query(MaintenanceRequest).filter(
-        MaintenanceRequest.student_id == student.student_id
-    ).all()
-
-    return requests
-
 # OWNER - view maintenance history for a specific room
 @router.get(
     "/room/{room_id}/history",
@@ -207,4 +301,4 @@ def get_room_maintenance_history(
         .all()
     )
 
-    return requests
+    return add_display_details(requests, db)

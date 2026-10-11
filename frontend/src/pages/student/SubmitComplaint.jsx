@@ -35,7 +35,7 @@ function SubmitComplaint() {
       });
 
       setMessage(
-        `Complaint submitted successfully. Complaint ID: ${createdComplaint.complaint_id}`,
+        `Complaint submitted successfully.`,
       );
 
       setFormData({

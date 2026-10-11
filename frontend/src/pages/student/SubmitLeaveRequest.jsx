@@ -41,7 +41,7 @@ function SubmitLeaveRequest() {
       });
 
       setMessage(
-        `Leave request submitted successfully. Request ID: ${createdRequest.leave_request_id}`,
+        `Leave request submitted successfully.`,
       );
 
       setFormData({

@@ -118,20 +118,31 @@ function UpdateFeeRecord() {
             <div className="form-group">
               <label>Student</label>
 
-              <select
-                name="student_id"
-                value={formData.student_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Student</option>
-
-                {students.map((student) => (
-                  <option key={student.student_id} value={student.student_id}>
-                    {student.registration_no} - {student.full_name}
-                  </option>
-                ))}
-              </select>
+              <input
+                type="text"
+                value={
+                  students.find(
+                    (student) =>
+                      String(student.student_id) ===
+                      String(formData.student_id),
+                  )
+                    ? `${
+                        students.find(
+                          (student) =>
+                            String(student.student_id) ===
+                            String(formData.student_id),
+                        ).registration_no
+                      } - ${
+                        students.find(
+                          (student) =>
+                            String(student.student_id) ===
+                            String(formData.student_id),
+                        ).full_name
+                      }`
+                    : "Unknown Student"
+                }
+                readOnly
+              />
             </div>
 
             <div className="form-group">

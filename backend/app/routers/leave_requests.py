@@ -6,11 +6,14 @@ from app.models.leave_request import LeaveRequest
 from app.models.student import Student
 from app.models.user import User
 from app.models.notification import Notification
+
 from app.schemas.leave_request import (
     LeaveRequestCreate,
     LeaveRequestUpdate,
+    LeaveRequestStudentUpdate,
     LeaveRequestResponse,
 )
+
 from app.services.auth_service import get_current_user
 
 
@@ -18,7 +21,6 @@ router = APIRouter(
     prefix="/leave-requests",
     tags=["Leave Requests"],
 )
-
 
 # STUDENT - create leave request
 @router.post(
@@ -90,8 +92,16 @@ def get_leave_requests(
 ):
     leave_requests = db.query(LeaveRequest).all()
 
-    return leave_requests
+    for leave_request in leave_requests:
+        student = db.query(Student).filter(
+            Student.student_id == leave_request.student_id
+        ).first()
 
+        leave_request.student_name = (
+            student.full_name if student else "Unknown Student"
+        )
+
+    return leave_requests
 
 # STUDENT - read only own leave requests
 @router.get(
@@ -118,21 +128,32 @@ def get_my_leave_requests(
 
     return leave_requests
 
-# OWNER - delete leave request
-@router.delete(
-    "/{leave_request_id}",
+
+# STUDENT - update own pending leave request
+@router.put(
+    "/my/{leave_request_id}",
+    response_model=LeaveRequestResponse,
 )
-def delete_leave_request(
+def update_my_leave_request(
     leave_request_id: int,
+    leave_data: LeaveRequestStudentUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    leave_request = (
-        db.query(LeaveRequest)
-        .filter(
-            LeaveRequest.leave_request_id == leave_request_id
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
         )
-        .first()
-    )
+
+    leave_request = db.query(LeaveRequest).filter(
+        LeaveRequest.leave_request_id == leave_request_id,
+        LeaveRequest.student_id == student.student_id,
+    ).first()
 
     if not leave_request:
         raise HTTPException(
@@ -140,14 +161,29 @@ def delete_leave_request(
             detail="Leave request not found",
         )
 
-    db.delete(leave_request)
+    if leave_request.request_status.lower() != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending leave requests can be edited",
+        )
+
+    if leave_data.end_date < leave_data.start_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End date cannot be before start date",
+        )
+
+    leave_request.leave_type = leave_data.leave_type
+    leave_request.start_date = leave_data.start_date
+    leave_request.end_date = leave_data.end_date
+    leave_request.reason = leave_data.reason
+
     db.commit()
+    db.refresh(leave_request)
 
-    return {
-        "message": "Leave request deleted successfully"
-    }
+    return leave_request
 
-# OWNER - update leave request
+# OWNER - update leave request status only
 @router.put(
     "/{leave_request_id}",
     response_model=LeaveRequestResponse,
@@ -167,25 +203,42 @@ def update_leave_request(
             detail="Leave request not found",
         )
 
-    if leave_data.end_date < leave_data.start_date:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="End date cannot be before start date",
-        )
+    allowed_statuses = ["pending", "approved", "rejected"]
 
-    if leave_data.request_status not in ["pending", "approved", "rejected"]:
+    if leave_data.request_status not in allowed_statuses:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid leave request status",
         )
 
-    leave_request.leave_type = leave_data.leave_type
-    leave_request.start_date = leave_data.start_date
-    leave_request.end_date = leave_data.end_date
-    leave_request.reason = leave_data.reason
     leave_request.request_status = leave_data.request_status
 
     db.commit()
     db.refresh(leave_request)
 
     return leave_request
+
+# OWNER - delete leave request
+@router.delete(
+    "/{leave_request_id}",
+)
+def delete_leave_request(
+    leave_request_id: int,
+    db: Session = Depends(get_db),
+):
+    leave_request = db.query(LeaveRequest).filter(
+        LeaveRequest.leave_request_id == leave_request_id
+    ).first()
+
+    if not leave_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave request not found",
+        )
+
+    db.delete(leave_request)
+    db.commit()
+
+    return {
+        "message": "Leave request deleted successfully",
+    }

@@ -9,6 +9,7 @@ function ViewFeeRecords() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchFeeRecords = async () => {
@@ -25,6 +26,7 @@ function ViewFeeRecords() {
     fetchFeeRecords();
   }, []);
 
+  
   const handleDelete = async (feeRecordId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this fee record?",
@@ -35,6 +37,9 @@ function ViewFeeRecords() {
     }
 
     try {
+      setMessage("");
+      setError("");
+
       await apiRequest(`/fee-records/${feeRecordId}`, {
         method: "DELETE",
       });
@@ -42,8 +47,10 @@ function ViewFeeRecords() {
       setFeeRecords((currentRecords) =>
         currentRecords.filter((fee) => fee.fee_record_id !== feeRecordId),
       );
+
+      setMessage("Fee record deleted successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to delete fee record.");
     }
   };
 
@@ -51,7 +58,7 @@ function ViewFeeRecords() {
     const search = searchTerm.toLowerCase();
 
     return (
-      String(fee.student_id).includes(search) ||
+      (fee.student_name || "").toLowerCase().includes(search) ||
       fee.fee_type.toLowerCase().includes(search) ||
       fee.fee_status.toLowerCase().includes(search)
     );
@@ -72,6 +79,7 @@ function ViewFeeRecords() {
         <p>Review boarding fee records and payment status.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
 
       <div className="form-group">
@@ -81,7 +89,7 @@ function ViewFeeRecords() {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by student ID, fee type, or status"
+          placeholder="Search by student name, fee type, or status"
         />
       </div>
 
@@ -98,8 +106,7 @@ function ViewFeeRecords() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Fee ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Fee Type</th>
                 <th>Amount</th>
                 <th>Due Date</th>
@@ -112,9 +119,7 @@ function ViewFeeRecords() {
             <tbody>
               {filteredFeeRecords.map((fee) => (
                 <tr key={fee.fee_record_id}>
-                  <td>{fee.fee_record_id}</td>
-
-                  <td>{fee.student_id}</td>
+                  <td>{fee.student_name || "Unknown Student"}</td>
 
                   <td>{fee.fee_type}</td>
 

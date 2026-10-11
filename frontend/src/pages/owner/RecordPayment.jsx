@@ -63,7 +63,7 @@ function RecordPayment() {
       });
 
       setMessage(
-        `Payment recorded successfully. Payment ID: ${payment.payment_id}`,
+        `Payment recorded successfully`,
       );
 
       setFormData({
@@ -105,10 +105,8 @@ function RecordPayment() {
 
               {feeRecords.map((fee) => (
                 <option key={fee.fee_record_id} value={fee.fee_record_id}>
-                  Fee #{fee.fee_record_id} - Student {fee.student_id}
-                  {" - "}
-                  {fee.fee_type}
-                  {" - Rs. "}
+                  Fee #{fee.fee_record_id} -{" "}
+                  {fee.student_name || "Unknown Student"} - {fee.fee_type} - Rs.{" "}
                   {fee.amount}
                 </option>
               ))}

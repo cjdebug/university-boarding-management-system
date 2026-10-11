@@ -49,13 +49,8 @@ function MyRoomAllocation() {
 
             <div className="form-grid">
               <div className="form-group">
-                <label>Allocation ID</label>
-                <p>{allocation.allocation_id}</p>
-              </div>
-
-              <div className="form-group">
-                <label>Room ID</label>
-                <p>{allocation.room_id}</p>
+                <label>Room Number</label>
+                <p>{allocation.room_number || "-"}</p>
               </div>
 
               <div className="form-group">

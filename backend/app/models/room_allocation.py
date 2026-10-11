@@ -52,3 +52,7 @@ class RoomAllocation(Base):
 
     student = relationship("Student")
     room = relationship("Room")
+
+    @property
+    def room_number(self):
+        return self.room.room_number if self.room else None

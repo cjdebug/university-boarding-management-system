@@ -15,6 +15,8 @@ class RoomAllocationResponse(BaseModel):
     allocation_id: int
     student_id: int
     room_id: int
+    room_number: str
+    student_name: str
     bed_number: str | None
     allocation_date: date
     expected_checkout_date: date | None

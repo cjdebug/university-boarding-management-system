@@ -78,7 +78,6 @@ function UpdateAttendance() {
 
     try {
       const dataToSend = {
-        student_id: Number(formData.student_id),
         attendance_date: formData.attendance_date,
         attendance_status: formData.attendance_status,
         note: formData.note || null,
@@ -93,7 +92,7 @@ function UpdateAttendance() {
       );
 
       setMessage(
-        `Attendance updated successfully. Attendance ID: ${updatedAttendance.attendance_id}`,
+        `Attendance updated successfully`,
       );
 
       setTimeout(() => {
@@ -136,20 +135,20 @@ function UpdateAttendance() {
               <div className="form-group full-width">
                 <label>Student</label>
 
-                <select
-                  name="student_id"
-                  value={formData.student_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Student</option>
+                <input
+                  type="text"
+                  value={(() => {
+                    const student = students.find(
+                      (item) =>
+                        String(item.student_id) === String(formData.student_id),
+                    );
 
-                  {students.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.registration_no} - {student.full_name}
-                    </option>
-                  ))}
-                </select>
+                    return student
+                      ? `${student.registration_no} - ${student.full_name}`
+                      : "Unknown Student";
+                  })()}
+                  readOnly
+                />
               </div>
 
               <div className="form-group">

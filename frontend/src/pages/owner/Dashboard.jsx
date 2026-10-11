@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../../services/api";
 import {
   Users,
   BedDouble,
@@ -12,32 +14,76 @@ import {
 function Dashboard() {
   const navigate = useNavigate();
 
+  
+  const [counts, setCounts] = useState({
+    students: null,
+    rooms: null,
+    feeRecords: null,
+    attendance: null,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardCounts = async () => {
+      try {
+        const results = await Promise.allSettled([
+          apiRequest("/students"),
+          apiRequest("/rooms"),
+          apiRequest("/fee-records"),
+          apiRequest("/attendance"),
+        ]);
+
+        const getCount = (result) =>
+          result.status === "fulfilled" && Array.isArray(result.value)
+            ? result.value.length
+            : null;
+
+        setCounts({
+          students: getCount(results[0]),
+          rooms: getCount(results[1]),
+          feeRecords: getCount(results[2]),
+          attendance: getCount(results[3]),
+        });
+      } catch (error) {
+        console.error("Failed to load dashboard counts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardCounts();
+  }, []);
+
+
+  
   const stats = [
     {
       title: "Students",
-      value: "—",
+      value: loading ? "..." : (counts.students ?? "—"),
       subtitle: "Registered residents",
       icon: Users,
     },
     {
       title: "Rooms",
-      value: "—",
+      value: loading ? "..." : (counts.rooms ?? "—"),
       subtitle: "Boarding rooms",
       icon: BedDouble,
     },
     {
       title: "Fee Records",
-      value: "—",
-      subtitle: "Current fee records",
+      value: loading ? "..." : (counts.feeRecords ?? "—"),
+      subtitle: "Total fee records",
       icon: CreditCard,
     },
     {
       title: "Attendance",
-      value: "—",
-      subtitle: "Recorded attendance",
+      value: loading ? "..." : (counts.attendance ?? "—"),
+      subtitle: "Total attendance records",
       icon: CalendarCheck,
     },
   ];
+
 
   const quickActions = [
     {

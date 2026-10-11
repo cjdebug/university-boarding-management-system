@@ -58,7 +58,7 @@ function AllocateRoom() {
       });
 
       setMessage(
-        `Room allocated successfully. Allocation ID: ${createdAllocation.allocation_id}`,
+        `Room allocated successfully`,
       );
 
       setFormData({

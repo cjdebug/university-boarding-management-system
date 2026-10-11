@@ -45,3 +45,15 @@ def create_room(
     db.refresh(new_room)
 
     return new_room
+
+# OWNER - view all rooms
+@router.get(
+    "",
+    response_model=list[RoomResponse],
+)
+def get_rooms(
+    db: Session = Depends(get_db),
+):
+    rooms = db.query(Room).all()
+
+    return rooms

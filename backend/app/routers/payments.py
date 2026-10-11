@@ -9,7 +9,7 @@ from app.models.fee_record import FeeRecord
 from app.models.payment import Payment
 from app.models.student import Student
 from app.models.user import User
-from app.schemas.payment import PaymentCreate, PaymentResponse
+from app.schemas.payment import PaymentCreate, PaymentUpdate, PaymentResponse
 from app.services.auth_service import get_current_user
 
 
@@ -88,6 +88,7 @@ def create_payment(
     return new_payment
 
 
+
 # READ ALL PAYMENTS
 @router.get(
     "",
@@ -97,6 +98,22 @@ def get_payments(
     db: Session = Depends(get_db),
 ):
     payments = db.query(Payment).all()
+
+    for payment in payments:
+        fee_record = db.query(FeeRecord).filter(
+            FeeRecord.fee_record_id == payment.fee_record_id
+        ).first()
+
+        if fee_record:
+            student = db.query(Student).filter(
+                Student.student_id == fee_record.student_id
+            ).first()
+
+            payment.student_name = (
+                student.full_name if student else "Unknown Student"
+            )
+        else:
+            payment.student_name = "Unknown Student"
 
     return payments
 
@@ -108,7 +125,7 @@ def get_payments(
 )
 def update_payment(
     payment_id: int,
-    payment_data: PaymentCreate,
+    payment_data: PaymentUpdate,
     db: Session = Depends(get_db),
 ):
     payment = db.query(Payment).filter(
@@ -121,11 +138,12 @@ def update_payment(
             detail="Payment not found",
         )
 
-    new_fee_record = db.query(FeeRecord).filter(
-        FeeRecord.fee_record_id == payment_data.fee_record_id
+    # Keep the original fee record
+    fee_record = db.query(FeeRecord).filter(
+        FeeRecord.fee_record_id == payment.fee_record_id
     ).first()
 
-    if not new_fee_record:
+    if not fee_record:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Fee record not found",
@@ -137,19 +155,17 @@ def update_payment(
             detail="Payment amount must be greater than zero",
         )
 
-    old_fee_record_id = payment.fee_record_id
-
-    # Calculate amount already paid excluding the payment being updated
+    # Calculate other payments linked to this fee record
     current_paid = db.query(
         func.coalesce(func.sum(Payment.amount), 0)
     ).filter(
-        Payment.fee_record_id == payment_data.fee_record_id,
+        Payment.fee_record_id == payment.fee_record_id,
         Payment.payment_id != payment_id,
     ).scalar()
 
     current_paid = Decimal(current_paid)
 
-    remaining_balance = new_fee_record.amount - current_paid
+    remaining_balance = fee_record.amount - current_paid
 
     if payment_data.amount > remaining_balance:
         raise HTTPException(
@@ -157,51 +173,28 @@ def update_payment(
             detail="Payment amount cannot exceed outstanding balance",
         )
 
-    payment.fee_record_id = payment_data.fee_record_id
+    # Update allowed payment fields only
     payment.amount = payment_data.amount
     payment.payment_date = payment_data.payment_date
     payment.payment_method = payment_data.payment_method
     payment.reference_no = payment_data.reference_no
     payment.note = payment_data.note
 
-    # Update status of the new fee record
+    # Automatically recalculate fee status
     new_total_paid = current_paid + payment_data.amount
 
-    if new_total_paid >= new_fee_record.amount:
-        new_fee_record.fee_status = "paid"
+    if new_total_paid >= fee_record.amount:
+        fee_record.fee_status = "paid"
     elif new_total_paid > 0:
-        new_fee_record.fee_status = "partially_paid"
+        fee_record.fee_status = "partially_paid"
     else:
-        new_fee_record.fee_status = "pending"
-
-    # If the payment was moved from another fee record,
-    # recalculate the old fee record status.
-    if old_fee_record_id != payment_data.fee_record_id:
-        old_fee_record = db.query(FeeRecord).filter(
-            FeeRecord.fee_record_id == old_fee_record_id
-        ).first()
-
-        if old_fee_record:
-            old_total_paid = db.query(
-                func.coalesce(func.sum(Payment.amount), 0)
-            ).filter(
-                Payment.fee_record_id == old_fee_record_id,
-                Payment.payment_id != payment_id,
-            ).scalar()
-
-            old_total_paid = Decimal(old_total_paid)
-
-            if old_total_paid >= old_fee_record.amount:
-                old_fee_record.fee_status = "paid"
-            elif old_total_paid > 0:
-                old_fee_record.fee_status = "partially_paid"
-            else:
-                old_fee_record.fee_status = "pending"
+        fee_record.fee_status = "pending"
 
     db.commit()
     db.refresh(payment)
 
     return payment
+
 
 
 # DELETE PAYMENT

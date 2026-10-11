@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../../services/api";
 import {
   BedDouble,
   CalendarCheck,
@@ -12,29 +14,168 @@ import {
 function StudentDashboard() {
   const navigate = useNavigate();
 
+    const [roomAllocation, setRoomAllocation] = useState(null);
+    const [roomLoading, setRoomLoading] = useState(true);
+
+    const [attendancePercentage, setAttendancePercentage] = useState(null);
+    const [attendanceLoading, setAttendanceLoading] = useState(true);
+
+    const [feeRecords, setFeeRecords] = useState([]);
+    const [feeLoading, setFeeLoading] = useState(true);
+
+    const [announcements, setAnnouncements] = useState([]);
+    const [announcementLoading, setAnnouncementLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchRoomAllocation = async () => {
+        try {
+          const data = await apiRequest("/room-allocations/my");
+          setRoomAllocation(data);
+        } catch (error) {
+          setRoomAllocation(null);
+        } finally {
+          setRoomLoading(false);
+        }
+      };
+
+      fetchRoomAllocation();
+    }, []);
+
+    useEffect(() => {
+      const fetchAttendancePercentage = async () => {
+        try {
+          const data = await apiRequest("/attendance/my/percentage");
+          setAttendancePercentage(data);
+        } catch (error) {
+          setAttendancePercentage(null);
+        } finally {
+          setAttendanceLoading(false);
+        }
+      };
+
+      fetchAttendancePercentage();
+    }, []);
+
+    useEffect(() => {
+      const fetchFeeRecords = async () => {
+        try {
+          const data = await apiRequest("/fee-records/my");
+          setFeeRecords(data);
+        } catch (error) {
+          setFeeRecords([]);
+        } finally {
+          setFeeLoading(false);
+        }
+      };
+
+      fetchFeeRecords();
+    }, []);
+
+    useEffect(() => {
+      const fetchAnnouncements = async () => {
+        try {
+          const data = await apiRequest("/announcements");
+          setAnnouncements(data);
+        } catch (error) {
+          setAnnouncements([]);
+        } finally {
+          setAnnouncementLoading(false);
+        }
+      };
+
+      fetchAnnouncements();
+    }, []);
+
+  const pendingFees = feeRecords.filter(
+    (fee) => fee.fee_status?.toLowerCase() === "pending",
+  );
+
+  const overdueFees = feeRecords.filter(
+    (fee) => fee.fee_status?.toLowerCase() === "overdue",
+  );
+
+  const unpaidFees = feeRecords.filter(
+    (fee) => !["paid"].includes(fee.fee_status?.toLowerCase()),
+  );
+
+  let feeStatus = "No Fees";
+  let feeSubtitle = "No fee records found";
+
+  if (feeRecords.length > 0) {
+    if (overdueFees.length > 0) {
+      feeStatus = "Overdue";
+      feeSubtitle = `${overdueFees.length} overdue fee${
+        overdueFees.length > 1 ? "s" : ""
+      }`;
+    } else if (pendingFees.length > 0) {
+      feeStatus = "Pending";
+      feeSubtitle = `${pendingFees.length} pending fee${
+        pendingFees.length > 1 ? "s" : ""
+      }`;
+    } else if (unpaidFees.length === 0) {
+      feeStatus = "Paid";
+      feeSubtitle = "All fees paid";
+    }
+  }
+
+  const activeAnnouncements = announcements.filter(
+    (announcement) =>
+      (
+        announcement.announcement_status ||
+        announcement.status ||
+        ""
+      ).toLowerCase() === "active",
+  );
+
+  const pinnedAnnouncements = activeAnnouncements.filter(
+    (announcement) => announcement.is_pinned,
+  );
+
+  let announcementSubtitle = "No active announcements";
+
+  if (activeAnnouncements.length > 0) {
+    announcementSubtitle = `${pinnedAnnouncements.length} pinned announcement${
+      pinnedAnnouncements.length === 1 ? "" : "s"
+    }`;
+  }
+
   const stats = [
     {
       title: "Room Allocation",
-      value: "—",
-      subtitle: "Current assigned room",
+      value: roomLoading
+        ? "..."
+        : roomAllocation
+          ? `Room ${roomAllocation.room_id}`
+          : "Not Assigned",
+      subtitle: roomAllocation
+        ? `Bed ${roomAllocation.bed_number || "-"}`
+        : "No active room allocation",
       icon: BedDouble,
     },
     {
       title: "Attendance",
-      value: "—",
-      subtitle: "Recent attendance records",
+      value: attendanceLoading
+        ? "..."
+        : attendancePercentage
+          ? `${attendancePercentage.attendance_percentage}%`
+          : "No Data",
+      subtitle: attendancePercentage
+        ? `${attendancePercentage.present} present / ${attendancePercentage.total_attendance} records`
+        : "No attendance records",
       icon: CalendarCheck,
     },
     {
       title: "Fee Status",
-      value: "—",
-      subtitle: "Current boarding fees",
+      value: feeLoading ? "..." : feeStatus,
+      subtitle: feeLoading ? "Checking fee records..." : feeSubtitle,
       icon: CreditCard,
     },
     {
       title: "Announcements",
-      value: "—",
-      subtitle: "Recent boarding updates",
+      value: announcementLoading ? "..." : activeAnnouncements.length,
+      subtitle: announcementLoading
+        ? "Loading announcements..."
+        : announcementSubtitle,
       icon: Megaphone,
     },
   ];

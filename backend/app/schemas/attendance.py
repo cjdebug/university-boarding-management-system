@@ -9,14 +9,19 @@ class AttendanceCreate(BaseModel):
     attendance_status: str
     note: str | None = None
 
+class AttendanceUpdate(BaseModel):
+    attendance_date: date
+    attendance_status: str
+    note: str | None = None
+
 class BulkAttendanceCreate(BaseModel):
     attendance_date: date
     records: list[AttendanceCreate]
 
-
 class AttendanceResponse(BaseModel):
     attendance_id: int
     student_id: int
+    student_name: str | None = None
     attendance_date: date
     attendance_status: str
     note: str | None

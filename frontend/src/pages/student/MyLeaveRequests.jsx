@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function MyLeaveRequests() {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,19 +49,18 @@ function MyLeaveRequests() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
                 <th>Leave Type</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Reason</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
               {requests.map((request) => (
                 <tr key={request.leave_request_id}>
-                  <td>{request.leave_request_id}</td>
                   <td>{request.leave_type}</td>
                   <td>{request.start_date}</td>
                   <td>{request.end_date}</td>
@@ -71,6 +72,22 @@ function MyLeaveRequests() {
                     >
                       {request.request_status}
                     </span>
+                  </td>
+
+                  <td>
+                    {request.request_status.toLowerCase() === "pending" && (
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() =>
+                          navigate(
+                            `/student/leave-requests/${request.leave_request_id}/update`,
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

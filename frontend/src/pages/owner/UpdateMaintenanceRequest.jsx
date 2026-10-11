@@ -7,12 +7,15 @@ function UpdateMaintenanceRequest() {
   const { maintenance_request_id } = useParams();
 
   const [formData, setFormData] = useState({
+    student_name: "",
+    room_number: "",
     issue_type: "",
     description: "",
     request_status: "",
   });
 
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -26,7 +29,8 @@ function UpdateMaintenanceRequest() {
 
         const request = requests.find(
           (item) =>
-            item.maintenance_request_id === Number(maintenance_request_id),
+            String(item.maintenance_request_id) ===
+            String(maintenance_request_id),
         );
 
         if (!request) {
@@ -35,6 +39,8 @@ function UpdateMaintenanceRequest() {
         }
 
         setFormData({
+          student_name: request.student_name || "Unknown Student",
+          room_number: request.room_number || "Unknown Room",
           issue_type: request.issue_type,
           description: request.description,
           request_status: request.request_status,
@@ -53,45 +59,32 @@ function UpdateMaintenanceRequest() {
     loadRequest();
   }, [maintenance_request_id]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setMessage("");
     setError("");
+    setSaving(true);
 
     try {
-      const updatedRequest = await apiRequest(
-        `/maintenance-requests/${maintenance_request_id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            issue_type: formData.issue_type,
-            description: formData.description,
-            request_status: formData.request_status,
-          }),
-        },
-      );
+      await apiRequest(`/maintenance-requests/${maintenance_request_id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          request_status: formData.request_status,
+        }),
+      });
 
-      setMessage(
-        `Maintenance request updated successfully. Request ID: ${updatedRequest.maintenance_request_id}`,
-      );
+      setMessage("Maintenance request updated successfully.");
 
-      setTimeout(() => {
-        navigate("/owner/maintenance-requests");
-      }, 1000);
+      navigate("/owner/maintenance-requests");
     } catch (err) {
       setError(
         typeof err.message === "string"
           ? err.message
           : "Failed to update maintenance request.",
       );
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -107,7 +100,7 @@ function UpdateMaintenanceRequest() {
     <div className="page-container">
       <div className="page-header">
         <h1>Update Maintenance Request</h1>
-        <p>Update a maintenance request and its current status.</p>
+        <p>Review the maintenance request and update its status.</p>
       </div>
 
       {message && <div className="message-success">{message}</div>}
@@ -120,33 +113,28 @@ function UpdateMaintenanceRequest() {
             <h3>Maintenance Details</h3>
 
             <div className="form-grid">
+              <div className="form-group">
+                <label>Student</label>
+
+                <input type="text" value={formData.student_name} readOnly />
+              </div>
+
+              <div className="form-group">
+                <label>Room Number</label>
+
+                <input type="text" value={formData.room_number} readOnly />
+              </div>
+
               <div className="form-group full-width">
                 <label>Issue Type</label>
 
-                <select
-                  name="issue_type"
-                  value={formData.issue_type}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Issue Type</option>
-                  <option value="Electrical">Electrical</option>
-                  <option value="Plumbing">Plumbing</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Cleaning">Cleaning</option>
-                  <option value="Other">Other</option>
-                </select>
+                <input type="text" value={formData.issue_type} readOnly />
               </div>
 
               <div className="form-group full-width">
                 <label>Description</label>
 
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                />
+                <textarea value={formData.description} readOnly />
               </div>
 
               <div className="form-group full-width">
@@ -155,7 +143,12 @@ function UpdateMaintenanceRequest() {
                 <select
                   name="request_status"
                   value={formData.request_status}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData((current) => ({
+                      ...current,
+                      request_status: e.target.value,
+                    }))
+                  }
                   required
                 >
                   <option value="pending">Pending</option>
@@ -167,14 +160,15 @@ function UpdateMaintenanceRequest() {
           </div>
 
           <div>
-            <button type="submit" className="btn btn-primary">
-              Update Maintenance Request
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? "Updating..." : "Update Maintenance Request"}
             </button>
 
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => navigate("/owner/maintenance-requests")}
+              disabled={saving}
               style={{ marginLeft: "10px" }}
             >
               Cancel

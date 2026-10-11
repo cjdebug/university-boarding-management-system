@@ -54,6 +54,8 @@ def get_my_room_allocation(
             detail="No active room allocation found",
         )
 
+    allocation.student_name = student.full_name
+
     return allocation
 
 
@@ -141,8 +143,11 @@ def create_room_allocation(
     db.commit()
     db.refresh(new_allocation)
 
+    new_allocation.student_name = student.full_name
+
     return new_allocation
 
+# OWNER - view all room allocations
 
 # OWNER - view all room allocations
 @router.get(
@@ -153,5 +158,14 @@ def get_room_allocations(
     db: Session = Depends(get_db),
 ):
     allocations = db.query(RoomAllocation).all()
+
+    for allocation in allocations:
+        student = db.query(Student).filter(
+            Student.student_id == allocation.student_id
+        ).first()
+
+        allocation.student_name = (
+            student.full_name if student else "Unknown Student"
+        )
 
     return allocations

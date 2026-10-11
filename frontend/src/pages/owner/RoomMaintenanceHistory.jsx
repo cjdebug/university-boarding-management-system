@@ -1,13 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "../../services/api";
 
 function RoomMaintenanceHistory() {
   const [roomId, setRoomId] = useState("");
+  const [rooms, setRooms] = useState([]);
   const [requests, setRequests] = useState([]);
+
+  const [roomsLoading, setRoomsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
 
+  // Load all rooms from the database
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setRoomsLoading(true);
+
+        const data = await apiRequest("/rooms");
+
+        setRooms(
+          [...data].sort((a, b) =>
+            a.room_number.localeCompare(b.room_number, undefined, {
+              numeric: true,
+            }),
+          ),
+        );
+      } catch (err) {
+        setError(err.message || "Failed to load rooms.");
+      } finally {
+        setRoomsLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  // Clear previous history when selecting a different room
+  const handleRoomChange = (event) => {
+    setRoomId(event.target.value);
+    setRequests([]);
+    setSearched(false);
+    setError("");
+  };
+
+  // Load maintenance history for the selected room
   const handleSearch = async (event) => {
     event.preventDefault();
 
@@ -19,6 +56,7 @@ function RoomMaintenanceHistory() {
       setLoading(true);
       setError("");
       setSearched(false);
+      setRequests([]);
 
       const data = await apiRequest(
         `/maintenance-requests/room/${roomId}/history`,
@@ -27,11 +65,16 @@ function RoomMaintenanceHistory() {
       setRequests(data);
       setSearched(true);
     } catch (err) {
+      setRequests([]);
       setError(err.message || "Failed to load room maintenance history.");
     } finally {
       setLoading(false);
     }
   };
+
+  const selectedRoom = rooms.find(
+    (room) => String(room.room_id) === String(roomId),
+  );
 
   return (
     <div className="page-container">
@@ -46,44 +89,53 @@ function RoomMaintenanceHistory() {
 
           <div className="form-grid">
             <div className="form-group">
-              <label>Room ID</label>
+              <label htmlFor="maintenance-room">Room Number</label>
 
-              <input
-                type="number"
+              <select
+                id="maintenance-room"
                 value={roomId}
-                onChange={(event) => setRoomId(event.target.value)}
-                min="1"
-                placeholder="Enter room ID"
+                onChange={handleRoomChange}
                 required
-              />
+                disabled={roomsLoading || loading}
+              >
+                <option value="">
+                  {roomsLoading ? "Loading rooms..." : "Select Room"}
+                </option>
+
+                {rooms.map((room) => (
+                  <option key={room.room_id} value={room.room_id}>
+                    {room.room_number}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          View History
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={roomsLoading || loading || !roomId}
+        >
+          {loading ? "Loading..." : "View History"}
         </button>
       </form>
-
-      {loading && (
-        <div className="loading-text">Loading maintenance history...</div>
-      )}
 
       {error && <div className="message-error">{error}</div>}
 
       {searched && !loading && !error && requests.length === 0 && (
         <div className="empty-state">
-          No maintenance requests found for Room {roomId}.
+          No maintenance requests found for Room{" "}
+          {selectedRoom?.room_number || roomId}.
         </div>
       )}
 
-      {requests.length > 0 && !loading && (
+      {!loading && !error && requests.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Issue Type</th>
                 <th>Description</th>
                 <th>Request Date</th>
@@ -96,16 +148,19 @@ function RoomMaintenanceHistory() {
                 const status = request.request_status || "Pending";
 
                 const displayStatus = status
-                  .replace("_", " ")
+                  .replace(/_/g, " ")
                   .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
                 return (
                   <tr key={request.maintenance_request_id}>
-                    <td>{request.maintenance_request_id}</td>
-                    <td>{request.student_id}</td>
+                    <td>{request.student_name || "Unknown Student"}</td>
+
                     <td>{request.issue_type}</td>
+
                     <td>{request.description}</td>
-                    <td>{request.request_date}</td>
+
+                    <td>{request.request_date || "-"}</td>
+
                     <td>
                       <span
                         className={`status-badge status-${status.toLowerCase()}`}

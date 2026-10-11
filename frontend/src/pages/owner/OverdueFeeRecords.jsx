@@ -3,6 +3,7 @@ import { apiRequest } from "../../services/api";
 
 function OverdueFeeRecords() {
   const [overdueRecords, setOverdueRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -20,6 +21,16 @@ function OverdueFeeRecords() {
 
     fetchOverdueRecords();
   }, []);
+
+  const filteredOverdueRecords = overdueRecords.filter((fee) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    return (
+      (fee.student_name || "").toLowerCase().includes(search) ||
+      (fee.fee_type || "").toLowerCase().includes(search) ||
+      (fee.fee_status || "").replace(/_/g, " ").toLowerCase().includes(search)
+    );
+  });
 
   if (loading) {
     return (
@@ -41,17 +52,37 @@ function OverdueFeeRecords() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label>Search Overdue Fee Records</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, fee type, or status"
+          />
+        </div>
+      )}
+
       {!error && overdueRecords.length === 0 && (
         <div className="empty-state">No overdue fee records found.</div>
       )}
 
-      {overdueRecords.length > 0 && (
+      {!error &&
+        overdueRecords.length > 0 &&
+        filteredOverdueRecords.length === 0 && (
+          <div className="empty-state">
+            No overdue fee records match your search.
+          </div>
+        )}
+
+      {!error && filteredOverdueRecords.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Fee ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Fee Type</th>
                 <th>Amount</th>
                 <th>Due Date</th>
@@ -61,11 +92,9 @@ function OverdueFeeRecords() {
             </thead>
 
             <tbody>
-              {overdueRecords.map((fee) => (
+              {filteredOverdueRecords.map((fee) => (
                 <tr key={fee.fee_record_id}>
-                  <td>{fee.fee_record_id}</td>
-
-                  <td>{fee.student_id}</td>
+                  <td>{fee.student_name || "Unknown Student"}</td>
 
                   <td>{fee.fee_type}</td>
 
@@ -75,7 +104,7 @@ function OverdueFeeRecords() {
 
                   <td>
                     <span className={`status-badge status-${fee.fee_status}`}>
-                      {fee.fee_status.replace("_", " ")}
+                      {fee.fee_status.replace(/_/g, " ")}
                     </span>
                   </td>
 

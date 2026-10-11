@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function MyFeedback() {
+  const navigate = useNavigate();
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,12 +49,12 @@ function MyFeedback() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Feedback ID</th>
                 <th>Feedback Type</th>
                 <th>Message</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Owner Response</th>
+                <th>Action</th>
               </tr>
             </thead>
 
@@ -63,7 +65,6 @@ function MyFeedback() {
 
                 return (
                   <tr key={feedback.feedback_id}>
-                    <td>{feedback.feedback_id}</td>
                     <td>{feedback.feedback_type}</td>
                     <td>{feedback.message}</td>
                     <td>{feedback.feedback_date || "-"}</td>
@@ -76,6 +77,21 @@ function MyFeedback() {
                       </span>
                     </td>
                     <td>{feedback.owner_response || "No response yet."}</td>
+                    <td>
+                      {status.toLowerCase() === "submitted" && (
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() =>
+                            navigate(
+                              `/student/feedback/${feedback.feedback_id}/update`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 );
               })}

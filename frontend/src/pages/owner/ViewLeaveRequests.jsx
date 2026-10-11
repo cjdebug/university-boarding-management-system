@@ -4,33 +4,12 @@ import { apiRequest } from "../../services/api";
 
 function ViewLeaveRequests() {
   const navigate = useNavigate();
+
   const [requests, setRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const handleDelete = async (leaveRequestId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this leave request?",
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await apiRequest(`/leave-requests/${leaveRequestId}`, {
-        method: "DELETE",
-      });
-
-      setRequests(
-        requests.filter(
-          (request) => request.leave_request_id !== leaveRequestId,
-        ),
-      );
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchLeaveRequests = async () => {
@@ -47,6 +26,49 @@ function ViewLeaveRequests() {
     fetchLeaveRequests();
   }, []);
 
+  const handleDelete = async (leaveRequestId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this leave request?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage("");
+      setError("");
+
+      await apiRequest(`/leave-requests/${leaveRequestId}`, {
+        method: "DELETE",
+      });
+
+      setRequests((currentRequests) =>
+        currentRequests.filter(
+          (request) => request.leave_request_id !== leaveRequestId,
+        ),
+      );
+
+      setMessage("Leave request deleted successfully.");
+    } catch (err) {
+      setError(err.message || "Failed to delete leave request.");
+    }
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    const displayStatus = (request.request_status || "")
+      .replace(/_/g, " ")
+      .toLowerCase();
+
+    return (
+      (request.student_name || "").toLowerCase().includes(search) ||
+      (request.leave_type || "").toLowerCase().includes(search) ||
+      displayStatus.includes(search)
+    );
+  });
+
   if (loading) {
     return (
       <div className="page-container">
@@ -62,19 +84,36 @@ function ViewLeaveRequests() {
         <p>Review leave requests submitted by student residents.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
+
+      {!error && (
+        <div className="form-group">
+          <label>Search Leave Requests</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, leave type, or status"
+          />
+        </div>
+      )}
 
       {!error && requests.length === 0 && (
         <div className="empty-state">No leave requests found.</div>
       )}
 
-      {requests.length > 0 && (
+      {!error && requests.length > 0 && filteredRequests.length === 0 && (
+        <div className="empty-state">No leave requests match your search.</div>
+      )}
+
+      {!error && filteredRequests.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
                 <th>Leave Type</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -85,49 +124,59 @@ function ViewLeaveRequests() {
             </thead>
 
             <tbody>
-              {requests.map((request) => (
-                <tr key={request.leave_request_id}>
-                  <td>{request.leave_request_id}</td>
-                  <td>{request.student_id}</td>
-                  <td>{request.leave_type}</td>
-                  <td>{request.start_date}</td>
-                  <td>{request.end_date}</td>
-                  <td>{request.reason}</td>
+              {filteredRequests.map((request) => {
+                const requestStatus = request.request_status || "Unknown";
 
-                  <td>
-                    <span
-                      className={`status-badge status-${request.request_status.toLowerCase()}`}
-                    >
-                      {request.request_status}
-                    </span>
-                  </td>
+                const displayStatus = requestStatus
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-                  <td>
-                    <div className="table-actions">
-                      <button
-                        type="button"
-                        className="table-action-btn table-action-edit"
-                        onClick={() =>
-                          navigate(
-                            `/owner/leave-requests/${request.leave_request_id}/edit`,
-                          )
-                        }
+                return (
+                  <tr key={request.leave_request_id}>
+                    <td>{request.student_name || "Unknown Student"}</td>
+
+                    <td>{request.leave_type}</td>
+
+                    <td>{request.start_date}</td>
+
+                    <td>{request.end_date}</td>
+
+                    <td>{request.reason}</td>
+
+                    <td>
+                      <span
+                        className={`status-badge status-${requestStatus.toLowerCase()}`}
                       >
-                        Edit
-                      </button>
+                        {displayStatus}
+                      </span>
+                    </td>
 
-                      <button
-                        type="button"
-                        className="table-action-btn table-action-delete"
-                        onClick={() => handleDelete(request.leave_request_id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                  
-                </tr>
-              ))}
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-edit"
+                          onClick={() =>
+                            navigate(
+                              `/owner/leave-requests/${request.leave_request_id}/edit`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="table-action-btn table-action-delete"
+                          onClick={() => handleDelete(request.leave_request_id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
