@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function MyComplaints() {
+  const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -51,6 +53,7 @@ function MyComplaints() {
                 <th>Description</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
@@ -74,6 +77,23 @@ function MyComplaints() {
                       >
                         {displayStatus}
                       </span>
+                    </td>
+
+                    <td>
+                      {complaint.complaint_status?.toLowerCase() ===
+                        "pending" && (
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() =>
+                            navigate(
+                              `/student/complaints/${complaint.complaint_id}/update`,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

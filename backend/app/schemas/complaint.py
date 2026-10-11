@@ -13,6 +13,9 @@ class ComplaintUpdate(BaseModel):
     description: str
     complaint_status: str
 
+class ComplaintStudentUpdate(BaseModel):
+    complaint_type: str
+    description: str
 
 class ComplaintResponse(BaseModel):
     complaint_id: int

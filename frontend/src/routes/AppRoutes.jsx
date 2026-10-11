@@ -41,6 +41,7 @@ import ViewMaintenanceRequests from "../pages/owner/ViewMaintenanceRequests";
 import OperationsManagement from "../pages/owner/OperationsManagement";
 import SubmitComplaint from "../pages/student/SubmitComplaint";
 import MyComplaints from "../pages/student/MyComplaints";
+import StudentUpdateComplaint from "../pages/student/StudentUpdateComplaint";
 import ViewComplaints from "../pages/owner/ViewComplaints";
 import OwnerViewAnnouncements from "../pages/owner/ViewAnnouncements";
 import StudentViewAnnouncements from "../pages/student/ViewAnnouncements";
@@ -253,6 +254,11 @@ function AppRoutes() {
         <Route path="complaint" element={<SubmitComplaint />} />
 
         <Route path="complaints" element={<MyComplaints />} />
+
+        <Route
+          path="complaints/:complaint_id/update"
+          element={<StudentUpdateComplaint />}
+        />
 
         <Route path="announcements" element={<StudentViewAnnouncements />} />
 

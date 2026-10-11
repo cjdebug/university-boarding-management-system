@@ -11,6 +11,7 @@ from app.models.notification import Notification
 from app.schemas.complaint import (
     ComplaintCreate,
     ComplaintUpdate,
+    ComplaintStudentUpdate,
     ComplaintResponse,
 )
 from app.services.auth_service import get_current_user
@@ -112,6 +113,54 @@ def get_my_complaints(
     ).all()
 
     return complaints
+
+
+# STUDENT - update own complaint while still pending
+@router.put(
+    "/my/{complaint_id}",
+    response_model=ComplaintResponse,
+)
+def update_my_complaint(
+    complaint_id: int,
+    complaint_data: ComplaintStudentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.user_id == current_user.user_id
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student profile not found",
+        )
+
+    complaint = db.query(Complaint).filter(
+        Complaint.complaint_id == complaint_id,
+        Complaint.student_id == student.student_id,
+    ).first()
+
+    if not complaint:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Complaint not found",
+        )
+
+    if complaint.complaint_status.lower() != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending complaints can be updated.",
+        )
+
+    complaint.complaint_type = complaint_data.complaint_type
+    complaint.description = complaint_data.description
+
+    db.commit()
+    db.refresh(complaint)
+
+    return complaint
+
 
 # OWNER - update complaint
 @router.put(
