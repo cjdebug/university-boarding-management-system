@@ -1895,3 +1895,377 @@
         print-color-adjust: exact !important;
     }
 }
+
+/* ==========================================
+   COMMUNICATION ANALYTICAL REPORT ONLY
+   ========================================== */
+
+/* Hide PDF heading on normal website */
+@media screen {
+    .communication-analytics-page .print-report-header {
+        display: none !important;
+    }
+}
+
+/* Filter panel */
+.communication-analytics-page .communication-analytics-filter-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 28px;
+}
+
+.communication-analytics-page .communication-analytics-filter-panel h3 {
+    margin: 0 0 8px;
+    color: #173b2a;
+    font-size: 20px;
+}
+
+.communication-analytics-page .communication-analytics-filter-panel>p {
+    margin: 0 0 22px;
+    color: #60738f;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.communication-analytics-page .communication-analytics-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.communication-analytics-page .communication-analytics-filter-grid .form-group {
+    min-width: 0;
+}
+
+.communication-analytics-page .communication-analytics-filter-grid input,
+.communication-analytics-page .communication-analytics-filter-grid select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Generate Report and Reset buttons */
+.communication-analytics-page .communication-analytics-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.communication-analytics-page .communication-analytics-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Applied report filters */
+.communication-analytics-page .communication-analytics-applied-filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    padding: 20px;
+    margin-bottom: 28px;
+    background: #f8faf9;
+    border: 1px solid #e1e8e4;
+    border-radius: 10px;
+}
+
+.communication-analytics-page .communication-analytics-applied-filters span {
+    display: block;
+    margin-bottom: 8px;
+    color: #60738f;
+    font-size: 13px;
+}
+
+.communication-analytics-page .communication-analytics-applied-filters strong {
+    display: block;
+    color: #173b2a;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Section headings */
+.communication-analytics-page .communication-analytics-section-title {
+    margin: 32px 0 20px;
+    color: #173b2a;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+/* Announcement and feedback summary cards */
+.communication-analytics-page .communication-analytics-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.communication-analytics-page .communication-analytics-summary-grid .report-summary-card {
+    min-width: 0;
+    background: #f8faf9;
+    border: 1px solid #e1e8e4;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.communication-analytics-page .communication-analytics-summary-grid .report-summary-card span {
+    display: block;
+    color: #60738f;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.communication-analytics-page .communication-analytics-summary-grid .report-summary-card strong {
+    display: block;
+    color: #173b2a;
+    font-size: 22px;
+    overflow-wrap: anywhere;
+}
+
+/* Chart layout */
+.communication-analytics-page .communication-analytics-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.communication-analytics-page .communication-analytics-chart-card {
+    min-width: 0;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.communication-analytics-page .communication-analytics-chart-card h4 {
+    margin: 0 0 8px;
+    color: #173b2a;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.communication-analytics-page .communication-analytics-chart-card>p {
+    margin: 0 0 16px;
+    color: #60738f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.communication-analytics-page .communication-analytics-chart {
+    width: 100%;
+    height: 285px;
+    min-height: 285px;
+}
+
+.communication-analytics-page .communication-analytics-chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #f8faf9;
+    color: #718096;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Descriptive analysis */
+.communication-analytics-page .communication-analytics-analysis {
+    padding: 25px;
+    margin-bottom: 25px;
+    background: #f8faf9;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+}
+
+.communication-analytics-page .communication-analytics-analysis h3 {
+    margin: 0 0 12px;
+    color: #173b2a;
+    font-size: 20px;
+}
+
+.communication-analytics-page .communication-analytics-analysis>p {
+    color: #60738f;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.communication-analytics-page .communication-analytics-analysis ul {
+    margin: 12px 0 0;
+    padding-left: 22px;
+}
+
+.communication-analytics-page .communication-analytics-analysis li {
+    margin-bottom: 10px;
+    color: #344b68;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Report notes */
+.communication-analytics-page .communication-analytics-methodology {
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    background: #f8faf9;
+    border-left: 3px solid #166534;
+}
+
+.communication-analytics-page .communication-analytics-methodology h4 {
+    margin: 0 0 10px;
+    color: #173b2a;
+    font-size: 16px;
+}
+
+.communication-analytics-page .communication-analytics-methodology p {
+    margin: 0 0 8px;
+    color: #60738f;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* ==========================================
+   RESPONSIVE LAYOUT
+   ========================================== */
+
+@media screen and (max-width: 1100px) {
+
+    .communication-analytics-page .communication-analytics-filter-grid,
+    .communication-analytics-page .communication-analytics-applied-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .communication-analytics-page .communication-analytics-chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .communication-analytics-page .communication-analytics-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 700px) {
+
+    .communication-analytics-page .communication-analytics-filter-grid,
+    .communication-analytics-page .communication-analytics-applied-filters,
+    .communication-analytics-page .communication-analytics-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .communication-analytics-page .communication-analytics-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .communication-analytics-page .communication-analytics-chart-card {
+        padding: 14px;
+    }
+}
+
+/* ==========================================
+   COMMUNICATION REPORT PDF PRINTING
+   ========================================== */
+
+@media print {
+
+    /* Hide filter form */
+    .communication-analytics-page .communication-analytics-filter-panel {
+        display: none !important;
+    }
+
+    /* Position printed report */
+    .communication-analytics-page .communication-analytics-content {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        box-sizing: border-box !important;
+        background: #ffffff !important;
+    }
+
+    /* Applied filters */
+    .communication-analytics-page .communication-analytics-applied-filters {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        padding: 12px !important;
+        margin-bottom: 18px !important;
+    }
+
+    /* Summary cards */
+    .communication-analytics-page .communication-analytics-summary-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .communication-analytics-page .communication-analytics-summary-grid .report-summary-card {
+        padding: 12px !important;
+        border: 1px solid #cccccc !important;
+        break-inside: avoid !important;
+    }
+
+    /* Charts print vertically */
+    .communication-analytics-page .communication-analytics-chart-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .communication-analytics-page .communication-analytics-chart-card {
+        padding: 12px !important;
+        border: 1px solid #cccccc !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .communication-analytics-page .communication-analytics-chart {
+        width: 100% !important;
+        height: 255px !important;
+        min-height: 255px !important;
+    }
+
+    /* Keep Recharts SVG elements visible */
+    .communication-analytics-page .recharts-wrapper,
+    .communication-analytics-page .recharts-wrapper *,
+    .communication-analytics-page .recharts-surface,
+    .communication-analytics-page .recharts-surface * {
+        visibility: visible !important;
+    }
+
+    /* Keep descriptive sections together where possible */
+    .communication-analytics-page .communication-analytics-analysis,
+    .communication-analytics-page .communication-analytics-methodology {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+    }
+
+    .communication-analytics-page .communication-analytics-analysis {
+        padding: 15px !important;
+    }
+
+    .communication-analytics-page .communication-analytics-analysis li {
+        font-size: 11px !important;
+        line-height: 1.5 !important;
+        margin-bottom: 6px !important;
+    }
+
+    .communication-analytics-page .communication-analytics-section-title {
+        font-size: 18px !important;
+        margin: 20px 0 12px !important;
+    }
+
+    /* Preserve background colors */
+    .communication-analytics-page .communication-analytics-chart-card,
+    .communication-analytics-page .communication-analytics-summary-grid .report-summary-card,
+    .communication-analytics-page .communication-analytics-analysis,
+    .communication-analytics-page .communication-analytics-applied-filters {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
