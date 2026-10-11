@@ -7,12 +7,15 @@ function UpdateComplaint() {
   const { complaint_id } = useParams();
 
   const [formData, setFormData] = useState({
+    student_name: "",
+    room_number: "",
     complaint_type: "",
     description: "",
     complaint_status: "",
   });
 
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -25,7 +28,7 @@ function UpdateComplaint() {
         const complaints = await apiRequest("/complaints");
 
         const complaint = complaints.find(
-          (item) => item.complaint_id === Number(complaint_id),
+          (item) => String(item.complaint_id) === String(complaint_id),
         );
 
         if (!complaint) {
@@ -34,6 +37,8 @@ function UpdateComplaint() {
         }
 
         setFormData({
+          student_name: complaint.student_name || "Unknown Student",
+          room_number: complaint.room_number || "Not Assigned",
           complaint_type: complaint.complaint_type,
           description: complaint.description,
           complaint_status: complaint.complaint_status,
@@ -52,32 +57,22 @@ function UpdateComplaint() {
     loadComplaint();
   }, [complaint_id]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setMessage("");
     setError("");
+    setSaving(true);
 
     try {
-      const updatedComplaint = await apiRequest(`/complaints/${complaint_id}`, {
+      await apiRequest(`/complaints/${complaint_id}`, {
         method: "PUT",
         body: JSON.stringify({
-          complaint_type: formData.complaint_type,
-          description: formData.description,
           complaint_status: formData.complaint_status,
         }),
       });
 
-      setMessage(
-        `Complaint updated successfully.`,
-      );
+      setMessage("Complaint updated successfully.");
 
       setTimeout(() => {
         navigate("/owner/complaints");
@@ -88,6 +83,8 @@ function UpdateComplaint() {
           ? err.message
           : "Failed to update complaint.",
       );
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -103,7 +100,7 @@ function UpdateComplaint() {
     <div className="page-container">
       <div className="page-header">
         <h1>Update Complaint</h1>
-        <p>Update a complaint and its current status.</p>
+        <p>Review the complaint and update its status.</p>
       </div>
 
       {message && <div className="message-success">{message}</div>}
@@ -116,34 +113,28 @@ function UpdateComplaint() {
             <h3>Complaint Details</h3>
 
             <div className="form-grid">
+              <div className="form-group">
+                <label>Student</label>
+
+                <input type="text" value={formData.student_name} readOnly />
+              </div>
+
+              <div className="form-group">
+                <label>Room Number</label>
+
+                <input type="text" value={formData.room_number} readOnly />
+              </div>
+
               <div className="form-group full-width">
                 <label>Complaint Type</label>
 
-                <select
-                  name="complaint_type"
-                  value={formData.complaint_type}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Complaint Type</option>
-                  <option value="Noise">Noise</option>
-                  <option value="Cleanliness">Cleanliness</option>
-                  <option value="Facilities">Facilities</option>
-                  <option value="Roommate">Roommate</option>
-                  <option value="Safety">Safety</option>
-                  <option value="Other">Other</option>
-                </select>
+                <input type="text" value={formData.complaint_type} readOnly />
               </div>
 
               <div className="form-group full-width">
                 <label>Description</label>
 
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                />
+                <textarea value={formData.description} readOnly />
               </div>
 
               <div className="form-group full-width">
@@ -152,7 +143,12 @@ function UpdateComplaint() {
                 <select
                   name="complaint_status"
                   value={formData.complaint_status}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData((current) => ({
+                      ...current,
+                      complaint_status: e.target.value,
+                    }))
+                  }
                   required
                 >
                   <option value="pending">Pending</option>
@@ -164,14 +160,15 @@ function UpdateComplaint() {
           </div>
 
           <div>
-            <button type="submit" className="btn btn-primary">
-              Update Complaint
+            <button type="submit" className="btn btn-primary" disabled={saving}>
+              {saving ? "Updating..." : "Update Complaint"}
             </button>
 
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => navigate("/owner/complaints")}
+              disabled={saving}
               style={{ marginLeft: "10px" }}
             >
               Cancel

@@ -6,6 +6,7 @@ function ViewMaintenanceRequests() {
   const navigate = useNavigate();
 
   const [requests, setRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -54,6 +55,21 @@ function ViewMaintenanceRequests() {
     }
   };
 
+  const filteredRequests = requests.filter((request) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    const displayStatus = (request.request_status || "")
+      .replace(/_/g, " ")
+      .toLowerCase();
+
+    return (
+      (request.student_name || "").toLowerCase().includes(search) ||
+      (request.room_number || "").toLowerCase().includes(search) ||
+      (request.issue_type || "").toLowerCase().includes(search) ||
+      displayStatus.includes(search)
+    );
+  });
+
   if (loading) {
     return (
       <div className="page-container">
@@ -66,6 +82,7 @@ function ViewMaintenanceRequests() {
     <div className="page-container">
       <div className="page-header">
         <h1>Maintenance Requests</h1>
+
         <p>Review maintenance issues reported by student residents.</p>
 
         <button
@@ -81,18 +98,36 @@ function ViewMaintenanceRequests() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label>Search Maintenance Requests</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, room number, issue type, or status"
+          />
+        </div>
+      )}
+
       {!error && requests.length === 0 && (
         <div className="empty-state">No maintenance requests found.</div>
       )}
 
-      {requests.length > 0 && (
+      {!error && requests.length > 0 && filteredRequests.length === 0 && (
+        <div className="empty-state">
+          No maintenance requests match your search.
+        </div>
+      )}
+
+      {!error && filteredRequests.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
-                <th>Student ID</th>
-                <th>Room ID</th>
+                <th>Student Name</th>
+                <th>Room Number</th>
                 <th>Issue Type</th>
                 <th>Description</th>
                 <th>Request Date</th>
@@ -102,21 +137,18 @@ function ViewMaintenanceRequests() {
             </thead>
 
             <tbody>
-              {requests.map((request) => {
-                const status =
-                  request.status || request.request_status || "Pending";
+              {filteredRequests.map((request) => {
+                const requestStatus = request.request_status || "Unknown";
 
-                const displayStatus = status
-                  .replace("_", " ")
+                const displayStatus = requestStatus
+                  .replace(/_/g, " ")
                   .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
                 return (
                   <tr key={request.maintenance_request_id}>
-                    <td>{request.maintenance_request_id}</td>
+                    <td>{request.student_name || "Unknown Student"}</td>
 
-                    <td>{request.student_id}</td>
-
-                    <td>{request.room_id}</td>
+                    <td>{request.room_number || "Unknown Room"}</td>
 
                     <td>{request.issue_type}</td>
 
@@ -126,7 +158,7 @@ function ViewMaintenanceRequests() {
 
                     <td>
                       <span
-                        className={`status-badge status-${status.toLowerCase()}`}
+                        className={`status-badge status-${requestStatus.toLowerCase()}`}
                       >
                         {displayStatus}
                       </span>

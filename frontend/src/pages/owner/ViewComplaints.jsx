@@ -6,9 +6,25 @@ function ViewComplaints() {
   const navigate = useNavigate();
 
   const [complaints, setComplaints] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        const data = await apiRequest("/complaints");
+        setComplaints(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
 
   const handleDelete = async (complaintId) => {
     const confirmed = window.confirm(
@@ -39,20 +55,20 @@ function ViewComplaints() {
     }
   };
 
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const data = await apiRequest("/complaints");
-        setComplaints(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredComplaints = complaints.filter((complaint) => {
+    const search = searchTerm.trim().toLowerCase();
 
-    fetchComplaints();
-  }, []);
+    const status = (complaint.complaint_status || "")
+      .replace(/_/g, " ")
+      .toLowerCase();
+
+    return (
+      (complaint.student_name || "").toLowerCase().includes(search) ||
+      (complaint.room_number || "").toLowerCase().includes(search) ||
+      (complaint.complaint_type || "").toLowerCase().includes(search) ||
+      status.includes(search)
+    );
+  });
 
   if (loading) {
     return (
@@ -66,6 +82,7 @@ function ViewComplaints() {
     <div className="page-container">
       <div className="page-header">
         <h1>Student Complaints</h1>
+
         <p>Review complaints submitted by student residents.</p>
 
         <button
@@ -81,17 +98,34 @@ function ViewComplaints() {
 
       {error && <div className="message-error">{error}</div>}
 
+      {!error && (
+        <div className="form-group">
+          <label>Search Student Complaints</label>
+
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by student name, room number, complaint type, or status"
+          />
+        </div>
+      )}
+
       {!error && complaints.length === 0 && (
         <div className="empty-state">No complaints found.</div>
       )}
 
-      {complaints.length > 0 && (
+      {!error && complaints.length > 0 && filteredComplaints.length === 0 && (
+        <div className="empty-state">No complaints match your search.</div>
+      )}
+
+      {!error && filteredComplaints.length > 0 && (
         <div className="table-card">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Complaint ID</th>
-                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Room Number</th>
                 <th>Complaint Type</th>
                 <th>Description</th>
                 <th>Date</th>
@@ -101,29 +135,28 @@ function ViewComplaints() {
             </thead>
 
             <tbody>
-              {complaints.map((complaint) => {
-                const status =
-                  complaint.status || complaint.complaint_status || "Pending";
+              {filteredComplaints.map((complaint) => {
+                const complaintStatus = complaint.complaint_status || "Unknown";
 
-                const displayStatus = status
-                  .replace("_", " ")
+                const displayStatus = complaintStatus
+                  .replace(/_/g, " ")
                   .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
                 return (
                   <tr key={complaint.complaint_id}>
-                    <td>{complaint.complaint_id}</td>
+                    <td>{complaint.student_name || "Unknown Student"}</td>
 
-                    <td>{complaint.student_id}</td>
+                    <td>{complaint.room_number || "Not Assigned"}</td>
 
                     <td>{complaint.complaint_type}</td>
 
                     <td>{complaint.description}</td>
 
-                    <td>{complaint.complaint_date || complaint.date || "-"}</td>
+                    <td>{complaint.complaint_date || "-"}</td>
 
                     <td>
                       <span
-                        className={`status-badge status-${status.toLowerCase()}`}
+                        className={`status-badge status-${complaintStatus.toLowerCase()}`}
                       >
                         {displayStatus}
                       </span>
