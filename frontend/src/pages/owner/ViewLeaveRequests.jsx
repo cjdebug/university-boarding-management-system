@@ -9,6 +9,7 @@ function ViewLeaveRequests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchLeaveRequests = async () => {
@@ -35,6 +36,7 @@ function ViewLeaveRequests() {
     }
 
     try {
+      setMessage("");
       setError("");
 
       await apiRequest(`/leave-requests/${leaveRequestId}`, {
@@ -46,8 +48,10 @@ function ViewLeaveRequests() {
           (request) => request.leave_request_id !== leaveRequestId,
         ),
       );
+
+      setMessage("Leave request deleted successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to delete leave request.");
     }
   };
 
@@ -80,6 +84,7 @@ function ViewLeaveRequests() {
         <p>Review leave requests submitted by student residents.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
 
       {!error && (

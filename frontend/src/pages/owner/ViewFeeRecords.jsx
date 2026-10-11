@@ -9,6 +9,7 @@ function ViewFeeRecords() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchFeeRecords = async () => {
@@ -25,6 +26,7 @@ function ViewFeeRecords() {
     fetchFeeRecords();
   }, []);
 
+  
   const handleDelete = async (feeRecordId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this fee record?",
@@ -35,6 +37,9 @@ function ViewFeeRecords() {
     }
 
     try {
+      setMessage("");
+      setError("");
+
       await apiRequest(`/fee-records/${feeRecordId}`, {
         method: "DELETE",
       });
@@ -42,8 +47,10 @@ function ViewFeeRecords() {
       setFeeRecords((currentRecords) =>
         currentRecords.filter((fee) => fee.fee_record_id !== feeRecordId),
       );
+
+      setMessage("Fee record deleted successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to delete fee record.");
     }
   };
 
@@ -72,6 +79,7 @@ function ViewFeeRecords() {
         <p>Review boarding fee records and payment status.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
 
       <div className="form-group">

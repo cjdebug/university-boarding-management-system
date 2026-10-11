@@ -9,6 +9,7 @@ function ViewPaymentHistory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -35,6 +36,7 @@ function ViewPaymentHistory() {
     }
 
     try {
+      setMessage("");
       setError("");
 
       await apiRequest(`/payments/${paymentId}`, {
@@ -44,12 +46,13 @@ function ViewPaymentHistory() {
       setPayments((currentPayments) =>
         currentPayments.filter((payment) => payment.payment_id !== paymentId),
       );
+
+      setMessage("Payment deleted successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to delete payment.");
     }
   };
 
-  
   const filteredPayments = payments.filter((payment) => {
     const search = searchTerm.trim().toLowerCase();
 
@@ -75,6 +78,7 @@ function ViewPaymentHistory() {
         <p>Review all payments recorded for student boarding fees.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
 
       {!error && (

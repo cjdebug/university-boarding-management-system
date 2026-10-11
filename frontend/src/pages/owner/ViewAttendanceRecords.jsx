@@ -9,6 +9,7 @@ function ViewAttendanceRecords() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -25,6 +26,7 @@ function ViewAttendanceRecords() {
     fetchAttendance();
   }, []);
 
+  
   const handleDelete = async (attendanceId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this attendance record?",
@@ -35,6 +37,7 @@ function ViewAttendanceRecords() {
     }
 
     try {
+      setMessage("");
       setError("");
 
       await apiRequest(`/attendance/${attendanceId}`, {
@@ -42,12 +45,12 @@ function ViewAttendanceRecords() {
       });
 
       setRecords((currentRecords) =>
-        currentRecords.filter(
-          (record) => record.attendance_id !== attendanceId,
-        ),
+        currentRecords.filter((record) => record.attendance_id !== attendanceId),
       );
+
+      setMessage("Attendance record deleted successfully.");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to delete attendance record.");
     }
   };
 
@@ -77,6 +80,7 @@ function ViewAttendanceRecords() {
         <p>Review student attendance history and recorded status.</p>
       </div>
 
+      {message && <div className="message-success">{message}</div>}
       {error && <div className="message-error">{error}</div>}
 
       {!error && (
