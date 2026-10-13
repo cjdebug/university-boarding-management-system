@@ -56,7 +56,7 @@ function Dashboard() {
   }, []);
 
 
-  
+  // retriew student info
   const stats = [
     {
       title: "Students",

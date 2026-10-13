@@ -46,7 +46,7 @@ def calculate_fee_status(fee_record, paid_amount, outstanding):
 
     return "pending"
 
-
+# descriptive analysis
 def generate_analysis(
     total_records,
     total_billed,

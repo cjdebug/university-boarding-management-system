@@ -132,7 +132,7 @@ function TopNavbar({ userType, userName, userId }) {
       </div>
 
       <div className="navbar-right">
-
+{/* notification button */}
         <div className="notification-wrapper">
           <button
             className="notification-button"

@@ -11,6 +11,7 @@ function ViewFeeRecords() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // load all fee records
   useEffect(() => {
     const fetchFeeRecords = async () => {
       try {
@@ -26,7 +27,7 @@ function ViewFeeRecords() {
     fetchFeeRecords();
   }, []);
 
-  
+  // delete handler
   const handleDelete = async (feeRecordId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this fee record?",
@@ -54,6 +55,7 @@ function ViewFeeRecords() {
     }
   };
 
+  // search filter
   const filteredFeeRecords = feeRecords.filter((fee) => {
     const search = searchTerm.toLowerCase();
 
@@ -80,6 +82,7 @@ function ViewFeeRecords() {
       </div>
 
       {message && <div className="message-success">{message}</div>}
+      {/* search input */}
       {error && <div className="message-error">{error}</div>}
 
       <div className="form-group">
@@ -97,6 +100,7 @@ function ViewFeeRecords() {
         <div className="empty-state">No fee records found.</div>
       )}
 
+{/* display matching records */}
       {feeRecords.length > 0 && filteredFeeRecords.length === 0 && (
         <div className="empty-state">No fee records match your search.</div>
       )}
@@ -137,6 +141,7 @@ function ViewFeeRecords() {
 
                   <td>
                     <div className="table-actions">
+                      {/* edit button */}
                       <button
                         type="button"
                         className="table-action-btn table-action-edit"

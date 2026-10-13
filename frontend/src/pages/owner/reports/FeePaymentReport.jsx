@@ -59,6 +59,7 @@ const compactCurrency = (value) => {
   return String(amount);
 };
 
+// filter values
 const initialFilters = {
   from_date: "",
   to_date: "",
@@ -121,6 +122,7 @@ function FeePaymentReport() {
     }));
   };
 
+  // validates dates and generate report
   const handleGenerate = (event) => {
     event.preventDefault();
 
@@ -141,6 +143,7 @@ function FeePaymentReport() {
     loadReport(initialFilters);
   };
 
+  // handle print
   const handlePrint = () => {
     if (!loading && !error && report) {
       window.print();
@@ -149,6 +152,7 @@ function FeePaymentReport() {
 
   const summary = report?.summary || {};
 
+  // generates charts
   const charts = report?.charts || {};
 
   const collectionData = (charts.collection_performance || []).map((item) => ({

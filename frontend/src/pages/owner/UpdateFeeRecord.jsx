@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { apiRequest } from "../../services/api";
 
 function UpdateFeeRecord() {
+  // reads fee record ID
   const { fee_record_id } = useParams();
   const navigate = useNavigate();
 
@@ -63,6 +64,7 @@ function UpdateFeeRecord() {
     });
   };
 
+  // sends put request
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -121,6 +123,7 @@ function UpdateFeeRecord() {
               <input
                 type="text"
                 value={
+                  // display student name as read only
                   students.find(
                     (student) =>
                       String(student.student_id) ===
@@ -157,6 +160,7 @@ function UpdateFeeRecord() {
               />
             </div>
 
+            {/* editable fee details */}
             <div className="form-group">
               <label>Amount</label>
 

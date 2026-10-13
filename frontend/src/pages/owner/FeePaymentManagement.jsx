@@ -9,6 +9,7 @@ function FeePaymentManagement() {
   const [reminderError, setReminderError] = useState("");
   const [sendingReminders, setSendingReminders] = useState(false);
 
+  // send payment reminder
   const handleSendReminders = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to send payment reminders for overdue fee records?",

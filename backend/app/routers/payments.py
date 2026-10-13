@@ -45,6 +45,7 @@ def create_payment(
             detail="Payment amount must be greater than zero",
         )
 
+#overpayment prevention
     current_paid = db.query(
         func.coalesce(func.sum(Payment.amount), 0)
     ).filter(
@@ -75,6 +76,7 @@ def create_payment(
 
     new_total_paid = current_paid + payment_data.amount
 
+# recalculates new total
     if new_total_paid >= fee_record.amount:
         fee_record.fee_status = "paid"
     elif new_total_paid > 0:

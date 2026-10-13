@@ -142,23 +142,6 @@ function Login() {
               {loading ? "Signing in..." : "Login"}
             </button>
           </form>
-
-          <div className="login-divider">
-            <span />
-            <p>Need help?</p>
-            <span />
-          </div>
-
-          <div className="support-box">
-            <div className="support-icon">
-              <Headphones size={23} />
-            </div>
-
-            <div>
-              <strong>Contact Support</strong>
-              <p>We're here to help you</p>
-            </div>
-          </div>
         </div>
 
         <div className="login-footer">

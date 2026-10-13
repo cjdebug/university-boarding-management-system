@@ -17,6 +17,7 @@ function CreateFeeRecord() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // fetch students
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -36,7 +37,7 @@ function CreateFeeRecord() {
       [e.target.name]: e.target.value,
     });
   };
-
+// submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,7 +89,7 @@ function CreateFeeRecord() {
         <div className="form-grid">
           <div className="form-group">
             <label>Student</label>
-
+            {/* student dropdown list */}
             <select
               name="student_id"
               value={formData.student_id}

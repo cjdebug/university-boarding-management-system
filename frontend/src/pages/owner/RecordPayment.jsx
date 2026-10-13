@@ -18,6 +18,7 @@ function RecordPayment() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // dropdown filtering students
   useEffect(() => {
     const fetchFeeRecords = async () => {
       try {
